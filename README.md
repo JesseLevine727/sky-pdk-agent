@@ -26,6 +26,7 @@ scripts/setup_pdk.sh
 make render-ota
 make sim-ota
 make propose-ota
+make sweep-ota-quick
 ```
 
 `make render-ota` works without ngspice. `make sim-ota` requires ngspice and a
@@ -82,6 +83,6 @@ python3 scripts/check_tools.py
 - `circuits/ota/testbenches/ota_ac.spice.in`: OTA AC/DC testbench template
 - `scripts/run_ngspice.py`: render, run, and parse one SPICE job
 - `scripts/propose_sizing.py`: generate sizing changes from measured misses
-- `scripts/sweep_ota.py`: run candidate sweeps using the simulation runner
+- `scripts/sweep_ota.py`: run and rank candidate sweeps using the simulation runner
 - `AGENTS.md`: repo rules for future Codex sessions
 - `.agents/skills/analog-design/SKILL.md`: repo-scoped analog workflow skill

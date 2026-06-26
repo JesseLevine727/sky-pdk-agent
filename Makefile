@@ -36,5 +36,8 @@ propose-ota:
 sweep-ota:
 	$(PYTHON) scripts/sweep_ota.py --spec $(SPEC) --template $(OTA_TEMPLATE) --out-dir circuits/ota/sim/runs/sweep
 
+sweep-ota-quick:
+	$(PYTHON) scripts/sweep_ota.py --spec $(SPEC) --template $(OTA_TEMPLATE) --out-dir circuits/ota/sim/runs/sweep_quick --max-candidates 12
+
 skill-validate:
 	$(PYTHON) scripts/validate_skill.py .agents/skills/analog-design

@@ -5,7 +5,7 @@ supply_v: 1.8
 temperature_c: 27
 load_cap_f: 2.0e-12
 common_mode_v: 0.9
-bias_tail_v: 0.72
+bias_tail_v: 0.68
 
 targets:
   dc_gain_db:
@@ -27,17 +27,16 @@ simulation:
 devices:
   mn_in:
     model: sky130_fd_pr__nfet_01v8
-    w_um: 12
-    l_um: 0.5
+    w_um: 10.8
+    l_um: 0.7
     m: 2
   mp_load:
     model: sky130_fd_pr__pfet_01v8
     w_um: 18
-    l_um: 0.5
+    l_um: 0.7
     m: 2
   mn_tail:
     model: sky130_fd_pr__nfet_01v8
     w_um: 8
     l_um: 1.0
     m: 1
-
