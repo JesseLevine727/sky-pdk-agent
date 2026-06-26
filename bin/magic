@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+MAGIC_ROOT="$ROOT/.tools/apt/usr/lib/x86_64-linux-gnu/magic"
+export MAGIC_WISH="${MAGIC_WISH:-/usr/bin/wish8.6}"
+export LD_LIBRARY_PATH="$ROOT/.tools/apt/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH:-}"
+
+for arg in "$@"; do
+  case "$arg" in
+    --version|--prefix|-dnull)
+      exec "$MAGIC_ROOT/tcl/magicdnull" -nowrapper "$@"
+      ;;
+  esac
+done
+
+exec "$MAGIC_ROOT/tcl/magicexec" -- "$@"
+

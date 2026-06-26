@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+export LD_LIBRARY_PATH="$ROOT/.tools/apt/usr/lib/klayout:$ROOT/.tools/apt/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH:-}"
+if [ -z "${DISPLAY:-}" ]; then
+  export QT_QPA_PLATFORM="${QT_QPA_PLATFORM:-offscreen}"
+fi
+exec "$ROOT/.tools/apt/usr/lib/klayout/klayout" "$@"
+

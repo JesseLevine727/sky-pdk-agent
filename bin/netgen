@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+NETGEN_ROOT="$ROOT/.tools/apt/usr/lib/netgen"
+export NETGENDIR="$NETGEN_ROOT"
+export NETGEN_WISH="${NETGEN_WISH:-/usr/bin/wish8.6}"
+export LD_LIBRARY_PATH="$ROOT/.tools/apt/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH:-}"
+
+if [ "${1:-}" = "-gui" ]; then
+  exec "$NETGEN_ROOT/python/lvs_manager.py" "$@"
+fi
+
+exec "$NETGEN_ROOT/tcl/netgenexec" -- "$@"
+

@@ -1,0 +1,43 @@
+design: ota_5t
+pdk: sky130A
+
+supply_v: 1.8
+temperature_c: 27
+load_cap_f: 2.0e-12
+common_mode_v: 0.9
+bias_tail_v: 0.72
+
+targets:
+  dc_gain_db:
+    min: 40
+  unity_gain_hz:
+    min: 5.0e6
+  phase_margin_deg:
+    min: 60
+  power_w:
+    max: 5.0e-4
+
+simulation:
+  corner: tt
+  model_lib: "$PDK_ROOT/$PDK/libs.tech/ngspice/sky130.lib.spice"
+  ac_start_hz: 1
+  ac_stop_hz: 1.0e9
+  ac_points_per_decade: 20
+
+devices:
+  mn_in:
+    model: sky130_fd_pr__nfet_01v8
+    w_um: 12
+    l_um: 0.5
+    m: 2
+  mp_load:
+    model: sky130_fd_pr__pfet_01v8
+    w_um: 18
+    l_um: 0.5
+    m: 2
+  mn_tail:
+    model: sky130_fd_pr__nfet_01v8
+    w_um: 8
+    l_um: 1.0
+    m: 1
+

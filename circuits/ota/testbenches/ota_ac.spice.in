@@ -1,0 +1,45 @@
+* SKY130 5T OTA AC/DC characterization
+* Generated from ${spec_path}
+
+.lib "${model_lib}" ${corner}
+.temp ${temperature_c}
+
+.param VDD=${supply_v}
+.param VCM=${common_mode_v}
+.param VBIAS=${bias_tail_v}
+.param CL=${load_cap_f}
+
+.param MN_IN_W=${mn_in_w_um}
+.param MN_IN_L=${mn_in_l_um}
+.param MN_IN_M=${mn_in_m}
+.param MP_LOAD_W=${mp_load_w_um}
+.param MP_LOAD_L=${mp_load_l_um}
+.param MP_LOAD_M=${mp_load_m}
+.param MN_TAIL_W=${mn_tail_w_um}
+.param MN_TAIL_L=${mn_tail_l_um}
+.param MN_TAIL_M=${mn_tail_m}
+
+VDD vdd 0 DC {VDD}
+VSS vss 0 0
+VINP inp 0 DC {VCM} AC 0.5
+VINN inn 0 DC {VCM} AC -0.5
+VBIAS bias 0 DC {VBIAS}
+
+X1 outn inp tail vss ${mn_in_model} w=MN_IN_W l=MN_IN_L nf=MN_IN_M
+X2 out  inn tail vss ${mn_in_model} w=MN_IN_W l=MN_IN_L nf=MN_IN_M
+X3 outn outn vdd  vdd ${mp_load_model} w=MP_LOAD_W l=MP_LOAD_L nf=MP_LOAD_M
+X4 out  outn vdd  vdd ${mp_load_model} w=MP_LOAD_W l=MP_LOAD_L nf=MP_LOAD_M
+X5 tail bias vss  vss ${mn_tail_model} w=MN_TAIL_W l=MN_TAIL_L nf=MN_TAIL_M
+
+CL out 0 {CL}
+
+.op
+
+.ac dec ${ac_points_per_decade} ${ac_start_hz} ${ac_stop_hz}
+.print ac vdb(out) vp(out)
+.measure ac dc_gain_db FIND vdb(out) AT=1
+.measure ac unity_gain_hz WHEN vdb(out)=0 FALL=1
+.measure ac phase_at_unity_deg FIND vp(out) WHEN vdb(out)=0 FALL=1
+.measure ac phase_margin_deg PARAM='180 + phase_at_unity_deg'
+
+.end

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Analog Design"
+  short_description: "Run file-based analog design loops"
+  default_prompt: "Use $analog-design to size and verify a SKY130 analog block from spec to simulation report."

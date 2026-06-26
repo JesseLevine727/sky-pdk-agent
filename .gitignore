@@ -1,0 +1,21 @@
+.venv/
+__pycache__/
+*.pyc
+.tools/
+
+# Generated simulation and signoff output
+circuits/**/sim/runs/
+circuits/**/reports/*.json
+circuits/**/reports/*.log
+circuits/**/reports/*.rpt
+circuits/**/reports/*.spice
+circuits/**/layout/extracted/
+
+# Local EDA state
+*.raw
+*.log
+*.ext
+*.sim
+*.nodes
+*.w
+*.bak

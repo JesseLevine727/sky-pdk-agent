@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+export LD_LIBRARY_PATH="$ROOT/.tools/apt/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH:-}"
+export PDK_ROOT="${PDK_ROOT:-$HOME/.ciel}"
+export PDK="${PDK:-sky130A}"
+if [ -f "$PDK_ROOT/$PDK/libs.tech/ngspice/spinit" ]; then
+  export SPICEINIT="${SPICEINIT:-$PDK_ROOT/$PDK/libs.tech/ngspice/spinit}"
+fi
+exec "$ROOT/.tools/apt/usr/bin/ngspice" "$@"

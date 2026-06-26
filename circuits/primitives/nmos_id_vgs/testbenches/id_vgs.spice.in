@@ -1,0 +1,20 @@
+* SKY130 NMOS ID/VGS characterization
+* Generated from ${spec_path}
+
+.lib "${model_lib}" ${corner}
+.temp ${temperature_c}
+
+.param VDD=${supply_v}
+.param MN_DUT_W=${mn_dut_w_um}
+.param MN_DUT_L=${mn_dut_l_um}
+.param MN_DUT_M=${mn_dut_m}
+
+VDS drain 0 DC {VDD}
+VGS gate 0 0
+X1 drain gate 0 0 ${mn_dut_model} w=MN_DUT_W l=MN_DUT_L nf=MN_DUT_M
+
+.dc VGS ${gate_start_v} ${gate_stop_v} ${gate_step_v}
+.print dc v(gate) i(VDS)
+.measure dc id_at_900m_v FIND par('-i(VDS)') AT=0.9
+
+.end

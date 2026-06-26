@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+XSCHEM_SHAREDIR_LOCAL="$ROOT/.tools/apt/usr/share/xschem"
+XSCHEM_BIN_LOCAL="$ROOT/.tools/apt/usr/bin/xschem.local"
+ln -sfn "$XSCHEM_SHAREDIR_LOCAL" /tmp/xschem-share
+
+if [ ! -x "$XSCHEM_BIN_LOCAL" ]; then
+  cp "$ROOT/.tools/apt/usr/bin/xschem" "$XSCHEM_BIN_LOCAL"
+  python3 - "$XSCHEM_BIN_LOCAL" <<'PY'
+from pathlib import Path
+import sys
+
+path = Path(sys.argv[1])
+data = path.read_bytes()
+old = b"/usr/share/xschem"
+new = b"/tmp/xschem-share"
+if len(old) != len(new) or old not in data:
+    raise SystemExit("cannot patch xschem share path")
+path.write_bytes(data.replace(old, new))
+PY
+  chmod +x "$XSCHEM_BIN_LOCAL"
+fi
+
+export XSCHEM_SHAREDIR="$XSCHEM_SHAREDIR_LOCAL"
+export XSCHEM_LIBRARY_PATH="$XSCHEM_SHAREDIR_LOCAL/xschem_library/devices:$ROOT/.tools/apt/usr/share/doc/xschem/examples:$ROOT/.tools/apt/usr/share/doc/xschem/ngspice"
+export LD_LIBRARY_PATH="$ROOT/.tools/apt/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH:-}"
+exec "$XSCHEM_BIN_LOCAL" "$@"

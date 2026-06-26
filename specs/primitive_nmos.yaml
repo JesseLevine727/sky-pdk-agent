@@ -1,0 +1,24 @@
+design: primitive_nmos_id_vgs
+pdk: sky130A
+
+supply_v: 1.8
+temperature_c: 27
+
+targets:
+  id_at_900m_v:
+    min: 1.0e-6
+
+simulation:
+  corner: tt
+  model_lib: "$PDK_ROOT/$PDK/libs.tech/ngspice/sky130.lib.spice"
+  gate_start_v: 0
+  gate_stop_v: 1.8
+  gate_step_v: 0.02
+
+devices:
+  mn_dut:
+    model: sky130_fd_pr__nfet_01v8
+    w_um: 1.0
+    l_um: 0.15
+    m: 1
+
