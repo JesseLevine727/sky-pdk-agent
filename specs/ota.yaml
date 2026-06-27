@@ -72,7 +72,7 @@ devices:
     m: 2
   mp_load:
     model: sky130_fd_pr__pfet_01v8
-    w_um: 22
+    w_um: 26
     l_um: 1.05
     m: 2
   mn_tail:

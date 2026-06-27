@@ -1,4 +1,4 @@
-Flattening unmatched subcell sky130_fd_pr__pfet_01v8_E2UALK in circuit ota_5t (0)(2 instances)
+Flattening unmatched subcell sky130_fd_pr__pfet_01v8_5NTRG2 in circuit ota_5t (0)(2 instances)
 Flattening unmatched subcell sky130_fd_pr__nfet_01v8_7PFAFP in circuit ota_5t (0)(2 instances)
 Flattening unmatched subcell sky130_fd_pr__nfet_01v8_TPXDG7 in circuit ota_5t (0)(1 instance)
 

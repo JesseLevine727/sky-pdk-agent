@@ -192,9 +192,67 @@ Post-layout result:
 - `heavy_load_tt_27c_1v8`: pass, gain `42.5724 dB`, UGB `5.16631 MHz`,
   phase margin `88.0088 deg`, power `29.6231 uW`
 
-The remaining extracted-layout miss is small but real:
-`slow_ss_85c_1v62` misses the 40 dB gain target by about 0.004 dB. Trial
+At this milestone the remaining extracted-layout miss was small but real:
+`slow_ss_85c_1v62` missed the 40 dB gain target by about 0.004 dB. Trial
 nudges to PMOS load length, NMOS input width, and tail bias either worsened the
-post-layout slow gain or broke schematic strict evaluation, so the committed
-state preserves the schematic-closed baseline and records the post-layout miss
-explicitly.
+post-layout slow gain or broke schematic strict evaluation, so the initial
+physical-flow state preserved the schematic-closed baseline and recorded the
+post-layout miss explicitly.
+
+## 2026-06-26 Post-Layout Closure
+
+Closed the extracted-layout slow-corner gain miss by increasing the PMOS
+current-mirror load width:
+
+- `devices.mp_load.w_um`: `22` -> `26`
+
+Focused candidate screen:
+
+- Lowering `bias_tail_v` to `0.68` or `0.69` fixed slow gain but dropped
+  heavy-load UGB below 5 MHz.
+- Increasing `devices.mn_in.l_um` improved slow gain but did not reach 40 dB.
+- Increasing `devices.mp_load.w_um` to `26` passed the extracted slow-corner
+  gain screen and preserved heavy-load UGB.
+
+Verification command:
+
+```bash
+source env.sh
+make check
+make eval-ota-strict
+make drc-ota
+make lvs-ota
+make pex-ota
+make postlayout-ota
+```
+
+Schematic eval result:
+
+- `nominal_tt_27c_1v8`: gain `42.4015 dB`, UGB `12.5546 MHz`,
+  phase margin `84.653 deg`, power `29.5598 uW`
+- `slow_ss_85c_1v62`: gain `40.3723 dB`, UGB `10.6653 MHz`,
+  phase margin `84.9674 deg`, power `26.0238 uW`
+- `fast_ff_m40c_1v98`: gain `43.2266 dB`, UGB `13.1038 MHz`,
+  phase margin `84.6287 deg`, power `28.0617 uW`
+- `heavy_load_tt_27c_1v8`: gain `42.4015 dB`, UGB `5.07894 MHz`,
+  phase margin `88.0731 deg`, power `29.5598 uW`
+
+Post-layout eval result:
+
+- `nominal_tt_27c_1v8`: gain `42.6406 dB`, UGB `12.6424 MHz`,
+  phase margin `84.0301 deg`, power `29.6235 uW`
+- `slow_ss_85c_1v62`: gain `40.0903 dB`, UGB `10.6286 MHz`,
+  phase margin `84.3965 deg`, power `26.0946 uW`
+- `fast_ff_m40c_1v98`: gain `43.8448 dB`, UGB `13.3807 MHz`,
+  phase margin `83.9819 deg`, power `28.1075 uW`
+- `heavy_load_tt_27c_1v8`: gain `42.6406 dB`, UGB `5.1627 MHz`,
+  phase margin `87.7764 deg`, power `29.6235 uW`
+
+Physical gates:
+
+- Magic DRC: 0 errors.
+- Netgen LVS: `Netlists match uniquely`.
+- Magic PEX: wrote `circuits/ota/layout/extracted/ota_5t_extracted.spice`.
+
+All named schematic and extracted-layout evaluation cases now pass the current
+targets.

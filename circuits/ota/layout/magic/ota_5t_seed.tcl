@@ -12,9 +12,9 @@ proc make_pin {name x y num} {
 load ota_5t -force
 units microns
 box position 0.000 30.000
-magic::gencell sky130::sky130_fd_pr__pfet_01v8 XMP_DIODE -spice w 22 l 1.05 nf 1 m 1 guard 1 doports 1
+magic::gencell sky130::sky130_fd_pr__pfet_01v8 XMP_DIODE -spice w 26 l 1.05 nf 1 m 1 guard 1 doports 1
 box position 12.000 30.000
-magic::gencell sky130::sky130_fd_pr__pfet_01v8 XMP_MIRROR -spice w 22 l 1.05 nf 1 m 1 guard 1 doports 1
+magic::gencell sky130::sky130_fd_pr__pfet_01v8 XMP_MIRROR -spice w 26 l 1.05 nf 1 m 1 guard 1 doports 1
 box position 0.000 5.000
 magic::gencell sky130::sky130_fd_pr__nfet_01v8 XMN_INP -spice w 15.12 l 1.05 nf 1 m 1 guard 1 doports 1
 box position 12.000 5.000
@@ -101,18 +101,18 @@ proc draw_routes {} {
     paint metal2
     box 9.830 11.775 10.170 12.115
     paint via1
-    box 12.470 40.430 12.670 41.830
+    box 12.470 42.430 12.670 43.830
     paint metal1
-    box 10.000 40.330 12.570 40.530
+    box 10.000 42.330 12.570 42.530
     paint metal1
-    box 9.650 40.080 10.350 40.780
+    box 9.650 42.080 10.350 42.780
     paint metal1
-    box 9.650 40.080 10.350 40.780
+    box 9.650 42.080 10.350 42.780
     paint metal2
-    box 9.830 40.260 10.170 40.600
+    box 9.830 42.260 10.170 42.600
     paint via1
     # net vdd
-    box 21.750 29.400 22.250 55.750
+    box 21.750 29.400 22.250 59.750
     paint metal2
     box 22.000 45.400 22.000 45.600
     paint metal1
@@ -138,25 +138,25 @@ proc draw_routes {} {
     paint metal2
     box 21.830 29.830 22.170 30.170
     paint via1
-    box 1.810 41.830 2.010 55.150
+    box 1.810 43.830 2.010 59.150
     paint metal1
-    box 1.910 55.050 22.000 55.250
+    box 1.910 59.050 22.000 59.250
     paint metal1
-    box 21.650 54.800 22.350 55.500
+    box 21.650 58.800 22.350 59.500
     paint metal1
-    box 21.650 54.800 22.350 55.500
+    box 21.650 58.800 22.350 59.500
     paint metal2
-    box 21.830 54.980 22.170 55.320
+    box 21.830 58.980 22.170 59.320
     paint via1
-    box 13.810 41.830 14.010 55.150
+    box 13.810 43.830 14.010 59.150
     paint metal1
-    box 13.910 55.050 22.000 55.250
+    box 13.910 59.050 22.000 59.250
     paint metal1
-    box 21.650 54.800 22.350 55.500
+    box 21.650 58.800 22.350 59.500
     paint metal1
-    box 21.650 54.800 22.350 55.500
+    box 21.650 58.800 22.350 59.500
     paint metal2
-    box 21.830 54.980 22.170 55.320
+    box 21.830 58.980 22.170 59.320
     paint via1
     # net vss
     box 23.750 -25.100 24.250 5.600
@@ -254,7 +254,7 @@ proc draw_routes {} {
     box 17.820 21.000 18.180 21.360
     paint via2
     # net outn
-    box -2.250 12.745 -1.750 53.750
+    box -2.250 12.745 -1.750 57.750
     paint metal2
     box -2.000 13.245 0.570 13.445
     paint metal1
@@ -264,53 +264,53 @@ proc draw_routes {} {
     paint metal2
     box -2.170 13.175 -1.830 13.515
     paint via1
-    box -2.000 41.730 0.570 41.930
+    box -2.000 43.730 0.570 43.930
     paint metal1
-    box -2.350 41.480 -1.650 42.180
+    box -2.350 43.480 -1.650 44.180
     paint metal1
-    box -2.350 41.480 -1.650 42.180
+    box -2.350 43.480 -1.650 44.180
     paint metal2
-    box -2.170 41.660 -1.830 42.000
+    box -2.170 43.660 -1.830 44.000
     paint via1
-    box 0.890 52.800 1.590 53.500
+    box 0.890 56.800 1.590 57.500
     paint metal1
-    box 0.890 52.800 1.590 53.500
+    box 0.890 56.800 1.590 57.500
     paint metal2
-    box 1.070 52.980 1.410 53.320
+    box 1.070 56.980 1.410 57.320
     paint via1
-    box 0.890 52.800 1.590 53.500
+    box 0.890 56.800 1.590 57.500
     paint metal2
-    box 0.890 52.800 1.590 53.500
+    box 0.890 56.800 1.590 57.500
     paint metal3
-    box 1.060 52.970 1.420 53.330
+    box 1.060 56.970 1.420 57.330
     paint via2
-    box -2.000 52.900 1.240 53.400
+    box -2.000 56.900 1.240 57.400
     paint metal3
-    box -2.350 52.800 -1.650 53.500
+    box -2.350 56.800 -1.650 57.500
     paint metal2
-    box -2.350 52.800 -1.650 53.500
+    box -2.350 56.800 -1.650 57.500
     paint metal3
-    box -2.180 52.970 -1.820 53.330
+    box -2.180 56.970 -1.820 57.330
     paint via2
-    box 12.890 52.800 13.590 53.500
+    box 12.890 56.800 13.590 57.500
     paint metal1
-    box 12.890 52.800 13.590 53.500
+    box 12.890 56.800 13.590 57.500
     paint metal2
-    box 13.070 52.980 13.410 53.320
+    box 13.070 56.980 13.410 57.320
     paint via1
-    box 12.890 52.800 13.590 53.500
+    box 12.890 56.800 13.590 57.500
     paint metal2
-    box 12.890 52.800 13.590 53.500
+    box 12.890 56.800 13.590 57.500
     paint metal3
-    box 13.060 52.970 13.420 53.330
+    box 13.060 56.970 13.420 57.330
     paint via2
-    box -2.000 52.900 13.240 53.400
+    box -2.000 56.900 13.240 57.400
     paint metal3
-    box -2.350 52.800 -1.650 53.500
+    box -2.350 56.800 -1.650 57.500
     paint metal2
-    box -2.350 52.800 -1.650 53.500
+    box -2.350 56.800 -1.650 57.500
     paint metal3
-    box -2.180 52.970 -1.820 53.330
+    box -2.180 56.970 -1.820 57.330
     paint via2
     # net tail
     box 3.750 -14.515 4.250 0.600

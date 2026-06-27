@@ -54,9 +54,8 @@ the evidence.
 - Current schematic OTA result: `make eval-ota-strict` passes all 4 named cases.
 - Current physical OTA result: `make drc-ota` reports 0 Magic DRC errors and
   `make lvs-ota` reports `Netlists match uniquely`.
-- Current post-layout result: `make postlayout-ota` completes all 4 named cases;
-  3 pass and `slow_ss_85c_1v62` misses the 40 dB gain target by about
-  0.004 dB. Treat this as the remaining design miss, not a flow blocker.
+- Current post-layout result: `make postlayout-ota` completes and passes all 4
+  named extracted-layout cases.
 
 ## Periodic Push Rule
 

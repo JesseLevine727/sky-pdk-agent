@@ -2,7 +2,7 @@
 * Source of truth is the YAML spec; rerun `make netlist-ota` after sizing changes.
 .subckt ota_5t inp inn out vdd vss bias
 + params: MN_IN_W=15.12 MN_IN_L=1.05 MN_IN_M=2
-+ params: MP_LOAD_W=22 MP_LOAD_L=1.05 MP_LOAD_M=2
++ params: MP_LOAD_W=26 MP_LOAD_L=1.05 MP_LOAD_M=2
 + params: MN_TAIL_W=8 MN_TAIL_L=1 MN_TAIL_M=1
 
 * Differential NMOS input pair with single-ended PMOS current-mirror load.
