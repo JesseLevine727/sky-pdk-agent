@@ -4,19 +4,14 @@
 - Template: `circuits/ota/testbenches/ota_ac.spice.in`
 - Run root: `circuits/ota/sim/runs/eval`
 - Plot: `circuits/ota/sim/runs/eval/metrics.svg`
-- Overall: FAIL
+- Overall: PASS
 
 | Case | Result | Gain dB | UGB Hz | PM deg | Power W | Run Dir |
 | --- | :---: | ---: | ---: | ---: | ---: | --- |
-| nominal_tt_27c_1v8 | pass | 40.5168 | 9.75349e+06 | 87.8569 | 2.21324e-05 | `circuits/ota/sim/runs/eval/nominal_tt_27c_1v8` |
-| slow_ss_85c_1v62 | fail | 39.0318 | 8.57603e+06 | 88.0257 | 2.02336e-05 | `circuits/ota/sim/runs/eval/slow_ss_85c_1v62` |
-| fast_ff_m40c_1v98 | pass | 41.0466 | 9.43243e+06 | 87.8868 | 1.94964e-05 | `circuits/ota/sim/runs/eval/fast_ff_m40c_1v98` |
-| heavy_load_tt_27c_1v8 | fail | 40.5168 | 3.91813e+06 | 89.4603 | 2.21324e-05 | `circuits/ota/sim/runs/eval/heavy_load_tt_27c_1v8` |
-
-## Failing Cases
-
-- `slow_ss_85c_1v62`: dc_gain_db miss 0.0242062.
-- `heavy_load_tt_27c_1v8`: unity_gain_hz miss 0.216373.
+| nominal_tt_27c_1v8 | pass | 42.3525 | 1.25808e+07 | 85.1619 | 2.95592e-05 | `circuits/ota/sim/runs/eval/nominal_tt_27c_1v8` |
+| slow_ss_85c_1v62 | pass | 40.174 | 1.06827e+07 | 85.4607 | 2.60232e-05 | `circuits/ota/sim/runs/eval/slow_ss_85c_1v62` |
+| fast_ff_m40c_1v98 | pass | 43.2292 | 1.3132e+07 | 85.139 | 2.80614e-05 | `circuits/ota/sim/runs/eval/fast_ff_m40c_1v98` |
+| heavy_load_tt_27c_1v8 | pass | 42.3525 | 5.08037e+06 | 88.2901 | 2.95592e-05 | `circuits/ota/sim/runs/eval/heavy_load_tt_27c_1v8` |
 
 ## Next Agent Moves
 

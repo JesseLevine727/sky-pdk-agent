@@ -100,3 +100,33 @@ The loop did not apply the best candidate because it did not pass every named
 evaluation case. This is the intended guardrail: Codex may rank and report
 near-misses, but source sizing changes should only be applied automatically when
 the deterministic eval gate passes.
+
+## 2026-06-26 Strict Evaluation Closure
+
+Closed the remaining schematic-level eval blockers with a refined sizing point:
+
+- `bias_tail_v=0.70`
+- `devices.mn_in.w_um=15.12`
+- `devices.mn_in.l_um=1.05`
+- `devices.mp_load.w_um=22`
+- `devices.mp_load.l_um=1.05`
+
+Verification command:
+
+```bash
+source env.sh
+make eval-ota-strict
+```
+
+Measured result:
+
+- `nominal_tt_27c_1v8`: gain `42.3525 dB`, UGB `12.5808 MHz`,
+  phase margin `85.1619 deg`, power `29.5592 uW`
+- `slow_ss_85c_1v62`: gain `40.174 dB`, UGB `10.6827 MHz`,
+  phase margin `85.4607 deg`, power `26.0232 uW`
+- `fast_ff_m40c_1v98`: gain `43.2292 dB`, UGB `13.132 MHz`,
+  phase margin `85.139 deg`, power `28.0614 uW`
+- `heavy_load_tt_27c_1v8`: gain `42.3525 dB`, UGB `5.08037 MHz`,
+  phase margin `88.2901 deg`, power `29.5592 uW`
+
+All named schematic-level evaluation cases now pass the current targets.
