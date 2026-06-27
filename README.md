@@ -10,9 +10,10 @@ The first target is a minimal 5T OTA flow:
 2. Render a primitive or OTA SPICE testbench from a spec file.
 3. Run ngspice in batch mode.
 4. Parse `.measure` output into JSON.
-5. Propose sizing changes from measured misses.
-6. Sweep proposed candidates with real simulations.
-7. Move to Xschem netlisting, Magic/KLayout layout checks, Netgen LVS, and
+5. Evaluate named corners and load cases with a durable report.
+6. Propose sizing changes from measured misses.
+7. Sweep proposed candidates with real simulations.
+8. Move to Xschem netlisting, Magic/KLayout layout checks, Netgen LVS, and
    Magic PEX when the schematic simulation loop is stable.
 
 ## Tooling
@@ -25,12 +26,18 @@ python3 scripts/check_tools.py
 scripts/setup_pdk.sh
 make render-ota
 make sim-ota
+make eval-ota
 make propose-ota
 make sweep-ota-quick
 ```
 
 `make render-ota` works without ngspice. `make sim-ota` requires ngspice and a
 valid SKY130 install.
+
+`make eval-ota` runs every named case in `specs/ota.yaml` and writes
+`circuits/ota/reports/latest_eval.md`. It is exploratory and exits successfully
+when simulations complete, even if a case misses target. `make eval-ota-strict`
+returns nonzero on target misses.
 
 Expected EDA tools:
 
@@ -82,6 +89,7 @@ python3 scripts/check_tools.py
 - `specs/primitive_nmos.yaml`: NMOS ID/VGS characterization example
 - `circuits/ota/testbenches/ota_ac.spice.in`: OTA AC/DC testbench template
 - `scripts/run_ngspice.py`: render, run, and parse one SPICE job
+- `scripts/evaluate_ota.py`: run named OTA evaluation cases and write a report
 - `scripts/propose_sizing.py`: generate sizing changes from measured misses
 - `scripts/sweep_ota.py`: run and rank candidate sweeps using the simulation runner
 - `AGENTS.md`: repo rules for future Codex sessions

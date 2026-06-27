@@ -18,11 +18,13 @@ For background on the repo contract, read `references/sky130-flow.md` when worki
 3. Render the SPICE testbench first with `scripts/run_ngspice.py --dry-run`.
 4. Run ngspice only after the rendered netlist looks structurally correct.
 5. Parse and inspect `measures.json`; compare each measurement against `targets`.
-6. If one target misses, use `scripts/propose_sizing.py` for a local proposal.
-7. If tradeoffs are coupled, run `scripts/sweep_ota.py` and inspect `ranked_results.json`.
-8. Apply the least aggressive passing candidate to the source spec, then rerun the canonical Make target.
-9. Record durable design evidence in `circuits/<block>/reports/design_notes.md`.
-10. Move to Xschem, layout, DRC, LVS, and PEX only after schematic simulation has evidence.
+6. Run `make eval-ota` when schematic behavior needs named process, voltage, temperature, or load coverage.
+7. If one target misses, use `scripts/propose_sizing.py` for a local proposal.
+8. If tradeoffs are coupled, run `scripts/sweep_ota.py` and inspect `ranked_results.json`.
+9. Apply the least aggressive passing candidate to the source spec, then rerun the canonical Make target and `make eval-ota`.
+10. Record durable design evidence in `circuits/<block>/reports/design_notes.md`.
+11. Commit and push after each coherent verified milestone in long-running agent work.
+12. Move to Xschem, layout, DRC, LVS, and PEX only after schematic simulation has evidence.
 
 ## Commands
 
@@ -36,6 +38,18 @@ Run OTA simulation:
 
 ```bash
 make sim-ota
+```
+
+Evaluate OTA across named cases:
+
+```bash
+make eval-ota
+```
+
+Use a hard evaluation gate:
+
+```bash
+make eval-ota-strict
 ```
 
 Generate a sizing proposal:
@@ -67,6 +81,8 @@ make check
 - State the exact command that produced any result.
 - Include the path to the run directory and `measures.json`.
 - For sweeps, report the top ranked candidate, whether it passed, and the chosen overrides.
+- For evaluations, report the pass/fail count, failing cases, and `circuits/ota/reports/latest_eval.md`.
 - Mark missing EDA tools or missing `PDK_ROOT` as blockers, not design failures.
 - Keep proposed changes as spec updates or explicit `--set` overrides.
 - Do not edit generated files under `circuits/**/sim/runs/` as source of truth.
+- Push after verified milestones when the user has requested periodic remote progress.

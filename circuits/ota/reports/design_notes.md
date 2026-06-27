@@ -44,3 +44,31 @@ Final measured result:
 
 All initial OTA targets pass in TT schematic-level simulation.
 
+## 2026-06-26 Multi-Case Evaluation Harness
+
+Added `make eval-ota` to run named cases from `specs/ota.yaml` and write
+`circuits/ota/reports/latest_eval.md`.
+
+Verification command:
+
+```bash
+source env.sh
+make eval-ota
+```
+
+Result:
+
+- Cases run: 4
+- Passed: 2
+- Failed targets: 2
+- Simulator errors: 0
+
+Failing cases:
+
+- `slow_ss_85c_1v62`: gain is 39.0318 dB against the 40 dB target.
+- `heavy_load_tt_27c_1v8`: unity-gain bandwidth is 3.91813 MHz against the
+  5 MHz target.
+
+The current OTA remains nominal-TT passing. The next design work should close
+the slow-corner gain miss and heavy-load bandwidth miss, then rerun
+`make eval-ota-strict`.

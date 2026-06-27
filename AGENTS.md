@@ -16,6 +16,8 @@ as simulation, DRC, LVS, or PEX evidence.
 5. Compare measurements against the spec before proposing sizing changes.
 6. Apply sizing changes only through specs, overrides, or scripted transforms.
 7. Re-run simulation after changes whenever the tools are available.
+8. Run `make eval-ota` before treating schematic behavior as stable across
+   named corners and load cases.
 
 ## Verification Rules
 
@@ -28,6 +30,17 @@ as simulation, DRC, LVS, or PEX evidence.
 - Treat DRC, LVS, and PEX scripts as signoff gates, not advisory checks.
 - Keep SPICE model paths configurable through `PDK_ROOT` and `PDK`; do not
   hardcode a personal absolute PDK path.
+- `make eval-ota` is an exploratory evaluation target: it should complete if
+  all simulations run, even when cases miss spec. Use `make eval-ota-strict`
+  when a hard pass/fail gate is required.
+
+## Git Rules
+
+- Commit and push after each coherent verified milestone during long agentic
+  work. Do not wait until the whole roadmap is complete.
+- Keep commits scoped: source flow changes, design sizing changes, and generated
+  durable reports may be separate milestones when that makes review clearer.
+- Do not commit generated run directories under `circuits/**/sim/runs/`.
 
 ## Coding Rules
 
@@ -37,4 +50,3 @@ as simulation, DRC, LVS, or PEX evidence.
   source spec or template instead.
 - Keep shell scripts POSIX-ish Bash with `set -euo pipefail`.
 - Run `make check` after changing scripts or skill files.
-
