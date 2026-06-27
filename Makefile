@@ -9,7 +9,7 @@ PRIMITIVE_SPEC ?= specs/primitive_nmos.yaml
 OTA_TEMPLATE ?= circuits/ota/testbenches/ota_ac.spice.in
 PRIMITIVE_TEMPLATE ?= circuits/primitives/nmos_id_vgs/testbenches/id_vgs.spice.in
 
-.PHONY: check tools render-ota sim-ota eval-ota eval-ota-strict agent-ota agent-ota-apply agent-ota-smoke render-primitive sim-primitive propose-ota sweep-ota skill-validate
+.PHONY: check tools netlist-ota render-ota sim-ota eval-ota eval-ota-strict agent-ota agent-ota-apply agent-ota-smoke render-primitive sim-primitive propose-ota sweep-ota skill-validate
 
 check: tools skill-validate
 	$(PYTHON) -m unittest discover -s tests
@@ -18,25 +18,28 @@ check: tools skill-validate
 tools:
 	$(PYTHON) scripts/check_tools.py --soft
 
-render-ota:
+netlist-ota:
+	$(PYTHON) scripts/render_ota_cell.py --spec $(SPEC) --out circuits/ota/schematic/ota_5t.spice
+
+render-ota: netlist-ota
 	$(PYTHON) scripts/run_ngspice.py --spec $(SPEC) --template $(OTA_TEMPLATE) --out-dir circuits/ota/sim/runs/render --dry-run
 
-sim-ota:
+sim-ota: netlist-ota
 	$(PYTHON) scripts/run_ngspice.py --spec $(SPEC) --template $(OTA_TEMPLATE) --out-dir circuits/ota/sim/runs/latest
 
-eval-ota:
+eval-ota: netlist-ota
 	$(PYTHON) scripts/evaluate_ota.py --spec $(SPEC) --template $(OTA_TEMPLATE) --out-dir circuits/ota/sim/runs/eval --report circuits/ota/reports/latest_eval.md
 
-eval-ota-strict:
+eval-ota-strict: netlist-ota
 	$(PYTHON) scripts/evaluate_ota.py --spec $(SPEC) --template $(OTA_TEMPLATE) --out-dir circuits/ota/sim/runs/eval --report circuits/ota/reports/latest_eval.md --strict
 
-agent-ota: tools
+agent-ota: tools netlist-ota
 	$(PYTHON) scripts/agent_loop.py --spec $(SPEC) --template $(OTA_TEMPLATE) --out-dir circuits/ota/sim/runs/agent_loop --report circuits/ota/reports/agent_loop.md --max-candidates 6
 
-agent-ota-apply: tools
+agent-ota-apply: tools netlist-ota
 	$(PYTHON) scripts/agent_loop.py --spec $(SPEC) --template $(OTA_TEMPLATE) --out-dir circuits/ota/sim/runs/agent_loop --report circuits/ota/reports/agent_loop.md --max-candidates 8 --apply-best
 
-agent-ota-smoke:
+agent-ota-smoke: netlist-ota
 	$(PYTHON) scripts/agent_loop.py --spec $(SPEC) --template $(OTA_TEMPLATE) --out-dir circuits/ota/sim/runs/agent_loop_smoke --report circuits/ota/sim/runs/agent_loop_smoke/report.md --max-candidates 3 --plan-only
 
 render-primitive:

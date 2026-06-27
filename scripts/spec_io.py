@@ -109,6 +109,11 @@ def flatten_for_template(spec: dict[str, Any]) -> dict[str, str]:
         for key, value in simulation.items():
             params[key] = value
 
+    schematic = spec.get("schematic", {})
+    if isinstance(schematic, dict):
+        for key, value in schematic.items():
+            params[f"schematic_{key}"] = normalize_template_path(value) if key.endswith(("_path", "_netlist")) else value
+
     devices = spec.get("devices", {})
     if isinstance(devices, dict):
         for device_name, device_values in devices.items():
@@ -118,6 +123,15 @@ def flatten_for_template(spec: dict[str, Any]) -> dict[str, str]:
                 params[f"{device_name}_{key}"] = value
 
     return {key: spice_literal(value) for key, value in params.items()}
+
+
+def normalize_template_path(value: Any) -> Any:
+    if not isinstance(value, str):
+        return value
+    path = Path(value).expanduser()
+    if path.is_absolute():
+        return str(path)
+    return str(path.resolve())
 
 
 def spice_literal(value: Any) -> str:
@@ -144,4 +158,3 @@ def target_bounds(spec: dict[str, Any]) -> dict[str, dict[str, float]]:
                 parsed[bound] = float(config[bound])
         bounds[name] = parsed
     return bounds
-

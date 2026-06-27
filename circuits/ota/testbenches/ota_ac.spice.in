@@ -2,6 +2,7 @@
 * Generated from ${spec_path}
 
 .lib "${model_lib}" ${corner}
+.include "${schematic_cell_netlist}"
 .temp ${temperature_c}
 
 .param VDD=${supply_v}
@@ -25,11 +26,10 @@ VINP inp 0 DC {VCM} AC 0.5
 VINN inn 0 DC {VCM} AC -0.5
 VBIAS bias 0 DC {VBIAS}
 
-X1 outn inp tail vss ${mn_in_model} w=MN_IN_W l=MN_IN_L nf=MN_IN_M
-X2 out  inn tail vss ${mn_in_model} w=MN_IN_W l=MN_IN_L nf=MN_IN_M
-X3 outn outn vdd  vdd ${mp_load_model} w=MP_LOAD_W l=MP_LOAD_L nf=MP_LOAD_M
-X4 out  outn vdd  vdd ${mp_load_model} w=MP_LOAD_W l=MP_LOAD_L nf=MP_LOAD_M
-X5 tail bias vss  vss ${mn_tail_model} w=MN_TAIL_W l=MN_TAIL_L nf=MN_TAIL_M
+XOTA inp inn out vdd vss bias ${schematic_cell_name}
++ MN_IN_W=MN_IN_W MN_IN_L=MN_IN_L MN_IN_M=MN_IN_M
++ MP_LOAD_W=MP_LOAD_W MP_LOAD_L=MP_LOAD_L MP_LOAD_M=MP_LOAD_M
++ MN_TAIL_W=MN_TAIL_W MN_TAIL_L=MN_TAIL_L MN_TAIL_M=MN_TAIL_M
 
 CL out 0 {CL}
 

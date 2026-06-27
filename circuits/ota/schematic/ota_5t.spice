@@ -1,0 +1,14 @@
+* SKY130 5T OTA schematic source generated from specs/ota.yaml
+* Source of truth is the YAML spec; rerun `make netlist-ota` after sizing changes.
+.subckt ota_5t inp inn out vdd vss bias
++ params: MN_IN_W=15.12 MN_IN_L=1.05 MN_IN_M=2
++ params: MP_LOAD_W=22 MP_LOAD_L=1.05 MP_LOAD_M=2
++ params: MN_TAIL_W=8 MN_TAIL_L=1 MN_TAIL_M=1
+
+* Differential NMOS input pair with single-ended PMOS current-mirror load.
+XMN_INP outn inp tail vss sky130_fd_pr__nfet_01v8 w=MN_IN_W l=MN_IN_L nf=MN_IN_M
+XMN_INN out inn tail vss sky130_fd_pr__nfet_01v8 w=MN_IN_W l=MN_IN_L nf=MN_IN_M
+XMP_DIODE outn outn vdd vdd sky130_fd_pr__pfet_01v8 w=MP_LOAD_W l=MP_LOAD_L nf=MP_LOAD_M
+XMP_MIRROR out outn vdd vdd sky130_fd_pr__pfet_01v8 w=MP_LOAD_W l=MP_LOAD_L nf=MP_LOAD_M
+XMN_TAIL tail bias vss vss sky130_fd_pr__nfet_01v8 w=MN_TAIL_W l=MN_TAIL_L nf=MN_TAIL_M
+.ends ota_5t

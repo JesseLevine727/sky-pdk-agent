@@ -130,3 +130,28 @@ Measured result:
   phase margin `88.2901 deg`, power `29.5592 uW`
 
 All named schematic-level evaluation cases now pass the current targets.
+
+## 2026-06-26 Schematic Source Netlist
+
+Added a committed schematic-level source cell at
+`circuits/ota/schematic/ota_5t.spice`, generated from `specs/ota.yaml` by
+`make netlist-ota`. The AC testbench now includes and instantiates this cell
+instead of embedding transistor instances directly in the testbench.
+
+Verification commands:
+
+```bash
+source env.sh
+make sim-ota
+make eval-ota-strict
+```
+
+Result:
+
+- `make sim-ota` passed and wrote
+  `circuits/ota/sim/runs/latest/measures.json`.
+- `make eval-ota-strict` passed all 4 named cases with the included
+  `ota_5t` subcircuit.
+
+This gives the flow a stable schematic SPICE boundary for later LVS and PEX
+comparison while preserving `--set` overrides through subcircuit parameters.

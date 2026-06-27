@@ -1,6 +1,10 @@
 design: ota_5t
 pdk: sky130A
 
+schematic:
+  cell_name: ota_5t
+  cell_netlist: circuits/ota/schematic/ota_5t.spice
+
 supply_v: 1.8
 temperature_c: 27
 load_cap_f: 2.0e-12
