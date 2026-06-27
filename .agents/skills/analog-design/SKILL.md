@@ -20,11 +20,13 @@ For background on the repo contract, read `references/sky130-flow.md` when worki
 5. Parse and inspect `measures.json`; compare each measurement against `targets`.
 6. Run `make eval-ota` when schematic behavior needs named process, voltage, temperature, or load coverage.
 7. If one target misses, use `scripts/propose_sizing.py` for a local proposal.
-8. If tradeoffs are coupled, run `scripts/sweep_ota.py` and inspect `ranked_results.json`.
-9. Apply the least aggressive passing candidate to the source spec, then rerun the canonical Make target and `make eval-ota`.
-10. Record durable design evidence in `circuits/<block>/reports/design_notes.md`.
-11. Commit and push after each coherent verified milestone in long-running agent work.
-12. Move to Xschem, layout, DRC, LVS, and PEX only after schematic simulation has evidence.
+8. If multiple evaluation cases trade off, run `make agent-ota` and inspect `circuits/ota/reports/agent_loop.md`.
+9. If a passing recursive candidate exists, apply it with `make agent-ota-apply`; otherwise broaden the candidate axes or escalate topology.
+10. If tradeoffs need a broader one-metric sweep, run `scripts/sweep_ota.py` and inspect `ranked_results.json`.
+11. Apply the least aggressive passing candidate to the source spec, then rerun the canonical Make target and `make eval-ota`.
+12. Record durable design evidence in `circuits/<block>/reports/design_notes.md`.
+13. Commit and push after each coherent verified milestone in long-running agent work.
+14. Move to Xschem, layout, DRC, LVS, and PEX only after schematic simulation has evidence.
 
 ## Commands
 
@@ -50,6 +52,18 @@ Use a hard evaluation gate:
 
 ```bash
 make eval-ota-strict
+```
+
+Run the bounded recursive agent loop:
+
+```bash
+make agent-ota
+```
+
+Apply only the best passing recursive candidate:
+
+```bash
+make agent-ota-apply
 ```
 
 Generate a sizing proposal:
@@ -82,6 +96,7 @@ make check
 - Include the path to the run directory and `measures.json`.
 - For sweeps, report the top ranked candidate, whether it passed, and the chosen overrides.
 - For evaluations, report the pass/fail count, failing cases, and `circuits/ota/reports/latest_eval.md`.
+- For recursive agent loops, report the baseline score, best candidate, whether it was applied, and `circuits/ota/reports/agent_loop.md`.
 - Mark missing EDA tools or missing `PDK_ROOT` as blockers, not design failures.
 - Keep proposed changes as spec updates or explicit `--set` overrides.
 - Do not edit generated files under `circuits/**/sim/runs/` as source of truth.

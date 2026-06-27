@@ -27,6 +27,7 @@ scripts/setup_pdk.sh
 make render-ota
 make sim-ota
 make eval-ota
+make agent-ota
 make propose-ota
 make sweep-ota-quick
 ```
@@ -38,6 +39,11 @@ valid SKY130 install.
 `circuits/ota/reports/latest_eval.md`. It is exploratory and exits successfully
 when simulations complete, even if a case misses target. `make eval-ota-strict`
 returns nonzero on target misses.
+
+`make agent-ota` runs a bounded recursive loop: baseline evaluation, miss
+mining, candidate generation, candidate evaluation, ranking, and a durable
+report at `circuits/ota/reports/agent_loop.md`. `make agent-ota-apply` only
+updates the source spec when the best candidate passes every named case.
 
 Expected EDA tools:
 
@@ -90,6 +96,7 @@ python3 scripts/check_tools.py
 - `circuits/ota/testbenches/ota_ac.spice.in`: OTA AC/DC testbench template
 - `scripts/run_ngspice.py`: render, run, and parse one SPICE job
 - `scripts/evaluate_ota.py`: run named OTA evaluation cases and write a report
+- `scripts/agent_loop.py`: run the recursive Codex-style sizing loop
 - `scripts/propose_sizing.py`: generate sizing changes from measured misses
 - `scripts/sweep_ota.py`: run and rank candidate sweeps using the simulation runner
 - `AGENTS.md`: repo rules for future Codex sessions

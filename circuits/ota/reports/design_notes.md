@@ -72,3 +72,31 @@ Failing cases:
 The current OTA remains nominal-TT passing. The next design work should close
 the slow-corner gain miss and heavy-load bandwidth miss, then rerun
 `make eval-ota-strict`.
+
+## 2026-06-26 Recursive Agent Loop
+
+Added `make agent-ota` around `scripts/agent_loop.py`.
+
+Verification command:
+
+```bash
+source env.sh
+make agent-ota
+```
+
+Result:
+
+- Baseline eval score: 2 passing cases, 2 failing cases, total normalized miss
+  `0.24058`.
+- Best ranked candidate: 3 passing cases, 1 failing case, total normalized miss
+  `0.002701`.
+- Best candidate overrides:
+  - `bias_tail_v=0.7`
+  - `devices.mn_in.l_um=1.05`
+  - `devices.mn_in.w_um=15.12`
+  - `devices.mp_load.l_um=1.05`
+
+The loop did not apply the best candidate because it did not pass every named
+evaluation case. This is the intended guardrail: Codex may rank and report
+near-misses, but source sizing changes should only be applied automatically when
+the deterministic eval gate passes.

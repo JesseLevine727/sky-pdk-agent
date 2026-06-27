@@ -37,7 +37,7 @@ agent-ota-apply: tools
 	$(PYTHON) scripts/agent_loop.py --spec $(SPEC) --template $(OTA_TEMPLATE) --out-dir circuits/ota/sim/runs/agent_loop --report circuits/ota/reports/agent_loop.md --max-candidates 8 --apply-best
 
 agent-ota-smoke:
-	$(PYTHON) scripts/agent_loop.py --spec $(SPEC) --template $(OTA_TEMPLATE) --out-dir circuits/ota/sim/runs/agent_loop_smoke --report circuits/ota/reports/agent_loop_smoke.md --max-candidates 3 --plan-only
+	$(PYTHON) scripts/agent_loop.py --spec $(SPEC) --template $(OTA_TEMPLATE) --out-dir circuits/ota/sim/runs/agent_loop_smoke --report circuits/ota/sim/runs/agent_loop_smoke/report.md --max-candidates 3 --plan-only
 
 render-primitive:
 	$(PYTHON) scripts/run_ngspice.py --spec $(PRIMITIVE_SPEC) --template $(PRIMITIVE_TEMPLATE) --out-dir circuits/primitives/nmos_id_vgs/sim/runs/render --dry-run

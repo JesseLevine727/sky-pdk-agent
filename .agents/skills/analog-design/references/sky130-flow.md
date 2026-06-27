@@ -13,13 +13,15 @@ Use this reference when turning an analog request into repo actions.
 4. Measurement: parse ngspice `.measure` values into `measures.json`.
 5. Multi-case evaluation: run `make eval-ota` for the named cases in
    `specs/ota.yaml`; inspect `circuits/ota/reports/latest_eval.md`.
-6. Sizing: change device widths, lengths, multiplicities, and bias values in
+6. Recursive agent loop: use `make agent-ota` to turn evaluation misses into
+   ranked candidate sizing changes; inspect `circuits/ota/reports/agent_loop.md`.
+7. Sizing: change device widths, lengths, multiplicities, and bias values in
    specs or through runner overrides.
-7. Sweep: evaluate candidates with `scripts/sweep_ota.py`; compare `ranked_results.json` and `summary.md`.
-8. Schematic capture: use Xschem once the netlist-level topology is stable.
-9. Layout: use Magic/KLayout and keep DRC reports under `circuits/<block>/reports`.
-10. LVS: compare extracted and schematic SPICE through Netgen.
-11. PEX: generate extracted SPICE and repeat simulations against the original specs.
+8. Sweep: evaluate candidates with `scripts/sweep_ota.py`; compare `ranked_results.json` and `summary.md`.
+9. Schematic capture: use Xschem once the netlist-level topology is stable.
+10. Layout: use Magic/KLayout and keep DRC reports under `circuits/<block>/reports`.
+11. LVS: compare extracted and schematic SPICE through Netgen.
+12. PEX: generate extracted SPICE and repeat simulations against the original specs.
 
 ## Evidence Standards
 
@@ -39,6 +41,12 @@ Evaluation evidence is:
 - `circuits/ota/reports/latest_eval.md`
 - `circuits/ota/sim/runs/eval/evaluation.json`
 - per-case run directories containing rendered netlists, logs, and measures
+
+Recursive agent-loop evidence is:
+
+- `circuits/ota/reports/agent_loop.md`
+- `circuits/ota/sim/runs/agent_loop/agent_loop.json`
+- candidate evaluation directories under `circuits/ota/sim/runs/agent_loop/`
 
 ## Sweep Practice
 
