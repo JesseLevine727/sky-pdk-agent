@@ -1,6 +1,11 @@
 import unittest
 
-from scripts.evaluate_ota import evaluation_cases, override_args, summarize_results
+from scripts.evaluate_ota import (
+    evaluation_cases,
+    override_args,
+    overrides_to_mapping,
+    summarize_results,
+)
 
 
 class EvaluateOtaTest(unittest.TestCase):
@@ -25,6 +30,17 @@ class EvaluateOtaTest(unittest.TestCase):
         args = override_args({"supply_v": 1.8, "simulation.corner": "tt"})
 
         self.assertEqual(args, ["--set", "simulation.corner=tt", "--set", "supply_v=1.8"])
+
+    def test_override_args_render_booleans_and_nulls(self):
+        args = override_args({"enabled": True, "none_value": None})
+
+        self.assertEqual(args, ["--set", "enabled=true", "--set", "none_value=null"])
+
+    def test_overrides_to_mapping_parses_scalars(self):
+        parsed = overrides_to_mapping(["supply_v=1.8", "enabled=true"])
+
+        self.assertEqual(parsed["supply_v"], 1.8)
+        self.assertTrue(parsed["enabled"])
 
     def test_summarize_results_counts_pass_fail_and_error(self):
         summary = summarize_results(

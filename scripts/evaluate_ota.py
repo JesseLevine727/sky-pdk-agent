@@ -13,10 +13,10 @@ from pathlib import Path
 from typing import Any
 
 try:
-    from .spec_io import load_spec
+    from .spec_io import apply_overrides, load_spec, parse_scalar
     from .sweep_ota import format_metric, load_measures, score_candidate
 except ImportError:  # pragma: no cover - command-line script mode
-    from spec_io import load_spec
+    from spec_io import apply_overrides, load_spec, parse_scalar
     from sweep_ota import format_metric, load_measures, score_candidate
 
 
@@ -92,12 +92,24 @@ def override_value(value: MetricValue) -> str:
     return str(value)
 
 
+def overrides_to_mapping(overrides: list[str]) -> dict[str, MetricValue]:
+    parsed: dict[str, MetricValue] = {}
+    for override in overrides:
+        if "=" not in override:
+            raise ValueError(f"Override must be key.path=value, got {override!r}")
+        key, raw_value = override.split("=", 1)
+        parsed[key] = parse_scalar(raw_value)
+    return parsed
+
+
 def run_case(
     runner: Path,
     spec_path: str,
     template_path: str,
     out_root: Path,
     case: dict[str, Any],
+    global_overrides: dict[str, MetricValue],
+    score_spec: dict[str, Any],
     dry_run: bool,
 ) -> dict[str, Any]:
     run_dir = out_root / str(case["name"])
@@ -111,17 +123,19 @@ def run_case(
         "--out-dir",
         str(run_dir),
     ]
-    cmd.extend(override_args(case["overrides"]))
+    effective_overrides = dict(global_overrides)
+    effective_overrides.update(case["overrides"])
+    cmd.extend(override_args(effective_overrides))
     if dry_run:
         cmd.append("--dry-run")
 
     completed = subprocess.run(cmd)
     measures = {} if dry_run or completed.returncode != 0 else load_measures(run_dir)
-    score = {} if dry_run or completed.returncode != 0 else score_candidate(load_spec(spec_path), measures)
+    score = {} if dry_run or completed.returncode != 0 else score_candidate(score_spec, measures)
     return {
         "case": case["name"],
         "description": case["description"],
-        "overrides": case["overrides"],
+        "overrides": effective_overrides,
         "run_dir": str(run_dir),
         "command": cmd,
         "returncode": completed.returncode,
@@ -271,17 +285,19 @@ def main() -> int:
     parser.add_argument("--template", required=True)
     parser.add_argument("--out-dir", required=True)
     parser.add_argument("--report", help="Markdown report path")
+    parser.add_argument("--set", action="append", default=[], help="Global override applied to every case, e.g. devices.mn_in.w_um=16")
     parser.add_argument("--strict", action="store_true", help="Return non-zero when any case misses a target")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
-    spec = load_spec(args.spec)
+    spec = apply_overrides(load_spec(args.spec), args.set)
     runner = Path(__file__).resolve().parent / "run_ngspice.py"
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    global_overrides = overrides_to_mapping(args.set)
     results = [
-        run_case(runner, args.spec, args.template, out_dir, case, args.dry_run)
+        run_case(runner, args.spec, args.template, out_dir, case, global_overrides, spec, args.dry_run)
         for case in evaluation_cases(spec)
     ]
     summary = summarize_results(results)

@@ -9,7 +9,7 @@ PRIMITIVE_SPEC ?= specs/primitive_nmos.yaml
 OTA_TEMPLATE ?= circuits/ota/testbenches/ota_ac.spice.in
 PRIMITIVE_TEMPLATE ?= circuits/primitives/nmos_id_vgs/testbenches/id_vgs.spice.in
 
-.PHONY: check tools render-ota sim-ota eval-ota eval-ota-strict render-primitive sim-primitive propose-ota sweep-ota skill-validate
+.PHONY: check tools render-ota sim-ota eval-ota eval-ota-strict agent-ota agent-ota-apply agent-ota-smoke render-primitive sim-primitive propose-ota sweep-ota skill-validate
 
 check: tools skill-validate
 	$(PYTHON) -m unittest discover -s tests
@@ -29,6 +29,15 @@ eval-ota:
 
 eval-ota-strict:
 	$(PYTHON) scripts/evaluate_ota.py --spec $(SPEC) --template $(OTA_TEMPLATE) --out-dir circuits/ota/sim/runs/eval --report circuits/ota/reports/latest_eval.md --strict
+
+agent-ota: tools
+	$(PYTHON) scripts/agent_loop.py --spec $(SPEC) --template $(OTA_TEMPLATE) --out-dir circuits/ota/sim/runs/agent_loop --report circuits/ota/reports/agent_loop.md --max-candidates 6
+
+agent-ota-apply: tools
+	$(PYTHON) scripts/agent_loop.py --spec $(SPEC) --template $(OTA_TEMPLATE) --out-dir circuits/ota/sim/runs/agent_loop --report circuits/ota/reports/agent_loop.md --max-candidates 8 --apply-best
+
+agent-ota-smoke:
+	$(PYTHON) scripts/agent_loop.py --spec $(SPEC) --template $(OTA_TEMPLATE) --out-dir circuits/ota/sim/runs/agent_loop_smoke --report circuits/ota/reports/agent_loop_smoke.md --max-candidates 3 --plan-only
 
 render-primitive:
 	$(PYTHON) scripts/run_ngspice.py --spec $(PRIMITIVE_SPEC) --template $(PRIMITIVE_TEMPLATE) --out-dir circuits/primitives/nmos_id_vgs/sim/runs/render --dry-run
