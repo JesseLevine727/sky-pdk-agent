@@ -9,7 +9,7 @@ PRIMITIVE_SPEC ?= specs/primitive_nmos.yaml
 OTA_TEMPLATE ?= circuits/ota/testbenches/ota_ac.spice.in
 PRIMITIVE_TEMPLATE ?= circuits/primitives/nmos_id_vgs/testbenches/id_vgs.spice.in
 
-.PHONY: check tools render-ota sim-ota render-primitive sim-primitive propose-ota sweep-ota skill-validate
+.PHONY: check tools render-ota sim-ota eval-ota eval-ota-strict render-primitive sim-primitive propose-ota sweep-ota skill-validate
 
 check: tools skill-validate
 	$(PYTHON) -m unittest discover -s tests
@@ -23,6 +23,12 @@ render-ota:
 
 sim-ota:
 	$(PYTHON) scripts/run_ngspice.py --spec $(SPEC) --template $(OTA_TEMPLATE) --out-dir circuits/ota/sim/runs/latest
+
+eval-ota:
+	$(PYTHON) scripts/evaluate_ota.py --spec $(SPEC) --template $(OTA_TEMPLATE) --out-dir circuits/ota/sim/runs/eval --report circuits/ota/reports/latest_eval.md
+
+eval-ota-strict:
+	$(PYTHON) scripts/evaluate_ota.py --spec $(SPEC) --template $(OTA_TEMPLATE) --out-dir circuits/ota/sim/runs/eval --report circuits/ota/reports/latest_eval.md --strict
 
 render-primitive:
 	$(PYTHON) scripts/run_ngspice.py --spec $(PRIMITIVE_SPEC) --template $(PRIMITIVE_TEMPLATE) --out-dir circuits/primitives/nmos_id_vgs/sim/runs/render --dry-run

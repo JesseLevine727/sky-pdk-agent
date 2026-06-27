@@ -24,6 +24,37 @@ simulation:
   ac_stop_hz: 1.0e9
   ac_points_per_decade: 20
 
+evaluation:
+  cases:
+    nominal_tt_27c_1v8:
+      description: Nominal schematic-level OTA check.
+      overrides:
+        simulation.corner: tt
+        temperature_c: 27
+        supply_v: 1.8
+        load_cap_f: 2.0e-12
+    slow_ss_85c_1v62:
+      description: Slow, hot, low-supply corner.
+      overrides:
+        simulation.corner: ss
+        temperature_c: 85
+        supply_v: 1.62
+        load_cap_f: 2.0e-12
+    fast_ff_m40c_1v98:
+      description: Fast, cold, high-supply corner.
+      overrides:
+        simulation.corner: ff
+        temperature_c: -40
+        supply_v: 1.98
+        load_cap_f: 2.0e-12
+    heavy_load_tt_27c_1v8:
+      description: Nominal process with heavier capacitive load.
+      overrides:
+        simulation.corner: tt
+        temperature_c: 27
+        supply_v: 1.8
+        load_cap_f: 5.0e-12
+
 devices:
   mn_in:
     model: sky130_fd_pr__nfet_01v8
