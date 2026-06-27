@@ -1,0 +1,32 @@
+* SKY130 5T OTA post-layout AC/DC characterization
+* Generated from ${spec_path}
+
+.lib "${model_lib}" ${corner}
+.include "${layout_extracted_netlist}"
+.temp ${temperature_c}
+
+.param VDD=${supply_v}
+.param VCM=${common_mode_v}
+.param VBIAS=${bias_tail_v}
+.param CL=${load_cap_f}
+
+VDD vdd 0 DC {VDD}
+VSS vss 0 0
+VINP inp 0 DC {VCM} AC 0.5
+VINN inn 0 DC {VCM} AC -0.5
+VBIAS bias 0 DC {VBIAS}
+
+XOTA inp inn out vdd vss bias ${layout_cell_name}
+
+CL out 0 {CL}
+
+.op
+
+.ac dec ${ac_points_per_decade} ${ac_start_hz} ${ac_stop_hz}
+.print ac vdb(out) vp(out)
+.measure ac dc_gain_db FIND vdb(out) AT=1
+.measure ac unity_gain_hz WHEN vdb(out)=0 FALL=1
+.measure ac phase_at_unity_deg FIND vp(out) WHEN vdb(out)=0 FALL=1
+.measure ac phase_margin_deg PARAM='180 + phase_at_unity_deg'
+
+.end

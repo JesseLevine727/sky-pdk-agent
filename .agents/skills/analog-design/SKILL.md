@@ -27,6 +27,8 @@ For background on the repo contract, read `references/sky130-flow.md` when worki
 12. Record durable design evidence in `circuits/<block>/reports/design_notes.md`.
 13. Commit and push after each coherent verified milestone in long-running agent work.
 14. Move to Xschem, layout, DRC, LVS, and PEX only after schematic simulation has evidence.
+15. For OTA physical work, run `make layout-ota`, `make drc-ota`, `make lvs-ota`, `make pex-ota`, and `make postlayout-ota` in order.
+16. Treat DRC/LVS failures as flow or layout blockers and post-layout target misses as design misses unless the simulator run itself failed.
 
 ## Commands
 
@@ -84,6 +86,36 @@ Run a quick bounded sweep:
 make sweep-ota-quick
 ```
 
+Generate deterministic OTA Magic layout:
+
+```bash
+make layout-ota
+```
+
+Run Magic DRC:
+
+```bash
+make drc-ota
+```
+
+Run Netgen LVS:
+
+```bash
+make lvs-ota
+```
+
+Run Magic PEX:
+
+```bash
+make pex-ota
+```
+
+Evaluate the extracted post-layout netlist:
+
+```bash
+make postlayout-ota
+```
+
 Validate repo scripts and this skill:
 
 ```bash
@@ -97,6 +129,10 @@ make check
 - For sweeps, report the top ranked candidate, whether it passed, and the chosen overrides.
 - For evaluations, report the pass/fail count, failing cases, and `circuits/ota/reports/latest_eval.md`.
 - For recursive agent loops, report the baseline score, best candidate, whether it was applied, and `circuits/ota/reports/agent_loop.md`.
+- For DRC, report the exact DRC error count and `circuits/ota/reports/drc/drc.md`.
+- For LVS, report whether Netgen printed `Netlists match uniquely` and cite `circuits/ota/reports/lvs_ota.md`.
+- For PEX, report the extracted netlist path under `circuits/ota/layout/extracted/`.
+- For post-layout eval, report pass/fail count, failing cases, and `circuits/ota/reports/postlayout_eval.md`.
 - Mark missing EDA tools or missing `PDK_ROOT` as blockers, not design failures.
 - Keep proposed changes as spec updates or explicit `--set` overrides.
 - Do not edit generated files under `circuits/**/sim/runs/` as source of truth.

@@ -17,8 +17,10 @@ The repo flow is intentionally file-based.
    a proposed override set.
 9. `scripts/sweep_ota.py` evaluates candidates by calling the same runner and
    writes `ranked_results.json` plus `summary.md` in the sweep run directory.
-10. Xschem, Magic, Netgen, and PEX scripts are used after schematic simulation
-   meets spec.
+10. `scripts/generate_ota_magic_layout.py` creates a deterministic Magic layout
+    seed from the same OTA spec.
+11. Magic DRC, Netgen LVS, Magic PEX, and post-layout ngspice evaluation run as
+    deterministic gates after schematic simulation meets spec.
 
 This separation is the contract for agent work: Codex may propose and edit
 files, but EDA tools produce verification evidence.
@@ -46,13 +48,15 @@ the evidence.
 ## Current Stack Status
 
 - Working: tool checks, primitive sim, OTA nominal sim, multi-case OTA eval,
-  recursive candidate ranking, sizing proposal reports, and deterministic
-  sweep reports.
-- Hooked but not complete: Xschem netlisting, Magic/KLayout DRC, Netgen LVS,
-  Magic PEX, and post-layout evaluation.
-- Current OTA result: nominal TT passes; the recursive loop improves multi-case
-  eval from 2/4 passing to 3/4 passing but has not found a full 4/4 passing
-  5T OTA candidate under the current targets.
+  recursive candidate ranking, sizing proposal reports, deterministic sweep
+  reports, schematic SPICE source generation, deterministic Magic layout seed,
+  Magic DRC, Netgen LVS, Magic PEX, and post-layout evaluation.
+- Current schematic OTA result: `make eval-ota-strict` passes all 4 named cases.
+- Current physical OTA result: `make drc-ota` reports 0 Magic DRC errors and
+  `make lvs-ota` reports `Netlists match uniquely`.
+- Current post-layout result: `make postlayout-ota` completes all 4 named cases;
+  3 pass and `slow_ss_85c_1v62` misses the 40 dB gain target by about
+  0.004 dB. Treat this as the remaining design miss, not a flow blocker.
 
 ## Periodic Push Rule
 

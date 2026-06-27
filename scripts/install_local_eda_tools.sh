@@ -27,6 +27,10 @@ packages=(
   libruby3.2
   libmd4c0
   libpcre2-16-0
+  tcl-dev
+  tcl8.6-dev
+  tk-dev
+  tk8.6-dev
 )
 
 mkdir -p "$DEB_DIR" "$APT_ROOT"
@@ -40,6 +44,8 @@ done
 
 chmod +x "$REPO_ROOT"/bin/* "$REPO_ROOT"/scripts/*.sh "$REPO_ROOT"/scripts/*.py
 
+"$REPO_ROOT/scripts/build_local_magic.sh"
+
 cat <<EOF
 Local EDA tools extracted under:
   $APT_ROOT
@@ -48,4 +54,3 @@ Use:
   source env.sh
   python3 scripts/check_tools.py
 EOF
-

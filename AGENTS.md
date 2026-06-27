@@ -20,6 +20,9 @@ as simulation, DRC, LVS, or PEX evidence.
    named corners and load cases.
 9. Use `make agent-ota` for bounded recursive sizing loops when multiple
    evaluation cases miss or trade off against each other.
+10. After schematic closure, run physical targets in order:
+    `make layout-ota`, `make drc-ota`, `make lvs-ota`, `make pex-ota`, and
+    `make postlayout-ota`.
 
 ## Verification Rules
 
@@ -38,6 +41,12 @@ as simulation, DRC, LVS, or PEX evidence.
 - `make agent-ota` ranks candidate sizing changes but does not change the source
   spec. `make agent-ota-apply` may update the spec only when the best candidate
   passes every named evaluation case.
+- `make drc-ota` must report zero Magic DRC errors before any LVS/PEX claim.
+- `make lvs-ota` must report `Netlists match uniquely` before treating layout
+  connectivity as closed.
+- `make postlayout-ota` is a deterministic extracted-netlist evaluation gate.
+  Treat any target miss as a real post-layout design miss, even when schematic
+  evaluation passes.
 
 ## Git Rules
 

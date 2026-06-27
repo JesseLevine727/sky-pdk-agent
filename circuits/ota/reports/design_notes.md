@@ -155,3 +155,46 @@ Result:
 
 This gives the flow a stable schematic SPICE boundary for later LVS and PEX
 comparison while preserving `--set` overrides through subcircuit parameters.
+
+## 2026-06-26 Physical Flow Closure
+
+Added a deterministic Magic layout seed, DRC, LVS extraction, PEX extraction,
+and post-layout OTA evaluation path.
+
+Verification commands:
+
+```bash
+source env.sh
+make drc-ota
+make lvs-ota
+make pex-ota
+make postlayout-ota
+```
+
+Physical signoff evidence:
+
+- `make drc-ota` wrote `circuits/ota/reports/drc/drc.md` with 0 Magic DRC
+  errors.
+- `make lvs-ota` wrote `circuits/ota/reports/lvs_ota.md` with 5 devices on
+  both sides, 8 nets on both sides, and `Netlists match uniquely`.
+- `make pex-ota` wrote
+  `circuits/ota/layout/extracted/ota_5t_extracted.spice`.
+- `make postlayout-ota` wrote `circuits/ota/reports/postlayout_eval.md`.
+
+Post-layout result:
+
+- `nominal_tt_27c_1v8`: pass, gain `42.5724 dB`, UGB `12.6845 MHz`,
+  phase margin `84.5563 deg`, power `29.6231 uW`
+- `slow_ss_85c_1v62`: fail, gain `39.8391 dB`, UGB `10.6581 MHz`,
+  phase margin `84.9065 deg`, power `26.094 uW`
+- `fast_ff_m40c_1v98`: pass, gain `43.841 dB`, UGB `13.4265 MHz`,
+  phase margin `84.517 deg`, power `28.1073 uW`
+- `heavy_load_tt_27c_1v8`: pass, gain `42.5724 dB`, UGB `5.16631 MHz`,
+  phase margin `88.0088 deg`, power `29.6231 uW`
+
+The remaining extracted-layout miss is small but real:
+`slow_ss_85c_1v62` misses the 40 dB gain target by about 0.004 dB. Trial
+nudges to PMOS load length, NMOS input width, and tail bias either worsened the
+post-layout slow gain or broke schematic strict evaluation, so the committed
+state preserves the schematic-closed baseline and records the post-layout miss
+explicitly.

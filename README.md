@@ -30,6 +30,11 @@ make eval-ota
 make agent-ota
 make propose-ota
 make sweep-ota-quick
+make layout-ota
+make drc-ota
+make lvs-ota
+make pex-ota
+make postlayout-ota
 ```
 
 `make render-ota` works without ngspice. `make sim-ota` requires ngspice and a
@@ -44,6 +49,12 @@ returns nonzero on target misses.
 mining, candidate generation, candidate evaluation, ranking, and a durable
 report at `circuits/ota/reports/agent_loop.md`. `make agent-ota-apply` only
 updates the source spec when the best candidate passes every named case.
+
+`make layout-ota` generates a deterministic Magic PCell route seed from
+`specs/ota.yaml`. `make drc-ota` writes `circuits/ota/reports/drc/drc.md`.
+`make lvs-ota` compares Magic extraction against
+`circuits/ota/schematic/ota_5t.spice` with Netgen. `make pex-ota` writes the
+cap-inclusive extracted SPICE used by `make postlayout-ota`.
 
 Expected EDA tools:
 
@@ -89,15 +100,29 @@ source env.sh
 python3 scripts/check_tools.py
 ```
 
+The local installer also builds a repo-local Magic when the distro package is
+too old or missing SKY130 batch support. `bin/magic` prefers
+`.tools/local/magic-8.3.668/bin/magic` when it exists, then falls back to a
+system or package-extracted Magic.
+
 ## Main Files
 
 - `specs/ota.yaml`: 5T OTA requirements, starting sizing, and simulation setup
 - `specs/primitive_nmos.yaml`: NMOS ID/VGS characterization example
 - `circuits/ota/testbenches/ota_ac.spice.in`: OTA AC/DC testbench template
+- `circuits/ota/testbenches/ota_ac_postlayout.spice.in`: extracted-layout OTA
+  AC/DC testbench template
 - `scripts/run_ngspice.py`: render, run, and parse one SPICE job
 - `scripts/evaluate_ota.py`: run named OTA evaluation cases and write a report
 - `scripts/agent_loop.py`: run the recursive Codex-style sizing loop
 - `scripts/propose_sizing.py`: generate sizing changes from measured misses
 - `scripts/sweep_ota.py`: run and rank candidate sweeps using the simulation runner
+- `scripts/generate_ota_magic_layout.py`: generate the deterministic Magic
+  layout seed from the OTA spec
+- `scripts/run_magic_drc.sh`: run Magic DRC and write a durable Markdown report
+- `scripts/run_magic_extract_lvs.sh`: create the device-focused extraction used
+  for Netgen LVS
+- `scripts/run_magic_pex.sh`: create the cap-inclusive extracted SPICE netlist
+- `scripts/run_netgen_lvs.sh`: compare schematic and extracted layout netlists
 - `AGENTS.md`: repo rules for future Codex sessions
 - `.agents/skills/analog-design/SKILL.md`: repo-scoped analog workflow skill

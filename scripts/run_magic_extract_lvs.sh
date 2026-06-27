@@ -35,14 +35,12 @@ magic -dnull -noconsole -rcfile "$RCFILE" <<EOF | tee "$LOG"
 load "$LAYOUT" -dereference
 extract all
 ext2spice lvs
-ext2spice cthresh 0
-ext2spice rthresh 0
 ext2spice -o "$OUT_SPICE" "$CELL"
 quit -noprompt
 EOF
 
 [ -s "$OUT_SPICE" ] || {
-  echo "PEX did not create $OUT_SPICE. Log: $LOG" >&2
+  echo "LVS extraction did not create $OUT_SPICE. Log: $LOG" >&2
   exit 1
 }
 

@@ -5,6 +5,11 @@ schematic:
   cell_name: ota_5t
   cell_netlist: circuits/ota/schematic/ota_5t.spice
 
+layout:
+  cell_name: ota_5t
+  magic_dir: circuits/ota/layout/magic
+  extracted_netlist: circuits/ota/layout/extracted/ota_5t_extracted.spice
+
 supply_v: 1.8
 temperature_c: 27
 load_cap_f: 2.0e-12

@@ -10,6 +10,7 @@ circuits/**/reports/*.log
 circuits/**/reports/*.rpt
 circuits/**/reports/*.spice
 circuits/**/layout/extracted/
+circuits/**/layout/magic/*.mag
 
 # Local EDA state
 *.raw

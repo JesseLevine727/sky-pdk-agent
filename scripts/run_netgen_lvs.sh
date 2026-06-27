@@ -30,4 +30,21 @@ SETUP="$PDK_ROOT/$PDK/libs.tech/netgen/${PDK}_setup.tcl"
 }
 
 mkdir -p "$(dirname "$REPORT")"
-netgen -batch lvs "$EXTRACTED $CELL" "$SCHEMATIC $CELL" "$SETUP" "$REPORT"
+LOG="${REPORT%.*}.log"
+netgen -batch lvs "$EXTRACTED $CELL" "$SCHEMATIC $CELL" "$SETUP" "$REPORT" | tee "$LOG"
+
+[ -s "$REPORT" ] || {
+  echo "Netgen did not create $REPORT. Log: $LOG" >&2
+  exit 1
+}
+
+if grep -q "Netlists match uniquely" "$REPORT"; then
+  exit 0
+fi
+
+if grep -q "Netlists do not match" "$REPORT"; then
+  exit 1
+fi
+
+echo "Could not determine LVS result from $REPORT" >&2
+exit 1

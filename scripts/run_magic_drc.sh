@@ -28,8 +28,10 @@ RCFILE="$PDK_ROOT/$PDK/libs.tech/magic/$PDK.magicrc"
 }
 
 mkdir -p "$REPORT_DIR"
+LOG="$REPORT_DIR/drc.log"
+REPORT="$REPORT_DIR/drc.md"
 
-magic -dnull -noconsole -rcfile "$RCFILE" <<EOF
+magic -dnull -noconsole -rcfile "$RCFILE" <<EOF | tee "$LOG"
 load "$LAYOUT" -dereference
 drc euclidean on
 drc check
@@ -38,3 +40,21 @@ drc count total
 drc listall why
 quit -noprompt
 EOF
+
+COUNT="$(grep -Eo 'Total DRC errors found: [0-9]+' "$LOG" | tail -1 | awk '{print $5}')"
+{
+  echo "# Magic DRC"
+  echo
+  echo "- Layout: \`$LAYOUT\`"
+  echo "- Log: \`$LOG\`"
+  echo "- DRC errors: \`${COUNT:-unknown}\`"
+} > "$REPORT"
+
+if [ -z "${COUNT:-}" ]; then
+  echo "could not parse DRC count from $LOG" >&2
+  exit 1
+fi
+
+if [ "$COUNT" != "0" ]; then
+  exit 1
+fi

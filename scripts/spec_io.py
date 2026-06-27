@@ -114,6 +114,11 @@ def flatten_for_template(spec: dict[str, Any]) -> dict[str, str]:
         for key, value in schematic.items():
             params[f"schematic_{key}"] = normalize_template_path(value) if key.endswith(("_path", "_netlist")) else value
 
+    layout = spec.get("layout", {})
+    if isinstance(layout, dict):
+        for key, value in layout.items():
+            params[f"layout_{key}"] = normalize_template_path(value) if key.endswith(("_path", "_netlist", "_dir")) else value
+
     devices = spec.get("devices", {})
     if isinstance(devices, dict):
         for device_name, device_values in devices.items():

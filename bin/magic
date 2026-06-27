@@ -2,17 +2,24 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+MAGIC_LOCAL="$ROOT/.tools/local/magic-8.3.668"
 MAGIC_ROOT="$ROOT/.tools/apt/usr/lib/x86_64-linux-gnu/magic"
+MAGIC_CAD_ROOT="$ROOT/.tools/apt/usr/lib/x86_64-linux-gnu"
 export MAGIC_WISH="${MAGIC_WISH:-/usr/bin/wish8.6}"
 export LD_LIBRARY_PATH="$ROOT/.tools/apt/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH:-}"
+export MAGIC_LOCAL_CAD_ROOT="$MAGIC_CAD_ROOT"
+
+if [ -x "$MAGIC_LOCAL/bin/magic" ]; then
+  export CAD_ROOT="$MAGIC_LOCAL/lib"
+  exec "$MAGIC_LOCAL/bin/magic" "$@"
+fi
 
 for arg in "$@"; do
   case "$arg" in
     --version|--prefix|-dnull)
-      exec "$MAGIC_ROOT/tcl/magicdnull" -nowrapper "$@"
+      exec "$MAGIC_ROOT/tcl/magicdnull" "$ROOT/scripts/magic_local_startup.tcl" -nowrapper "$@"
       ;;
   esac
 done
 
 exec "$MAGIC_ROOT/tcl/magicexec" -- "$@"
-
