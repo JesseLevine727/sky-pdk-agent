@@ -16,6 +16,9 @@ Commands:
 
 ```bash
 make check
+make plan-opamp-comparator-chain
+make eval-comparator
+make eval-opamp-comparator-chain
 make eval-ota
 make agent-ota
 make agent-ota-apply
@@ -48,6 +51,22 @@ candidates through isolated layout/PEX/post-layout signoff and re-ranks
 `devices.mp_load.w_um=26` first because it passes post-layout while the `24um`
 PMOS load candidate fails extracted slow-corner gain.
 
+## Mixed-Signal Intake State
+
+`intents/opamp_comparator_chain.yaml` is the first natural-language-style
+design intake example. The deterministic intake target writes
+`circuits/opamp_comparator_chain/reports/design_plan.md`, then the flow verifies
+a static CMOS comparator and a hierarchical OTA-to-comparator transient chain:
+
+```bash
+make plan-opamp-comparator-chain
+make eval-comparator
+make eval-opamp-comparator-chain
+```
+
+The current chain passes its nominal transient targets and reports a decision
+delay of `1.911959e-08 s` with `3.11317e-05 W` average power.
+
 ## Next Stack Stages
 
 1. Broaden sizing intelligence with a gm/ID or primitive characterization table.
@@ -55,3 +74,5 @@ PMOS load candidate fails extracted slow-corner gain.
 3. Generalize layout generation beyond OTA-specific placement/routing.
 4. Add topology-level candidates, not only sizing-axis candidates.
 5. Feed post-layout search outcomes back into proposal generation.
+6. Extend mixed-signal intake to more reusable topology templates and physical
+   signoff plans.

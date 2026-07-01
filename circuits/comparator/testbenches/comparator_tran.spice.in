@@ -1,0 +1,44 @@
+* SKY130 static CMOS comparator transient characterization
+* Generated from ${spec_path}
+
+.lib "${model_lib}" ${corner}
+.include "${schematic_cell_netlist}"
+.temp ${temperature_c}
+
+.param VDD=${supply_v}
+.param VIN_LOW=${input_low_v}
+.param VIN_HIGH=${input_high_v}
+.param VTH=${threshold_v}
+.param TSTEP=${input_step_time_s}
+.param TRISE=${input_rise_time_s}
+.param TFALL=${input_fall_time_s}
+.param TPW=${pulse_width_s}
+.param TPER=${pulse_period_s}
+.param CL=${load_cap_f}
+.param TMEAS0=${measure_initial_time_s}
+.param TMEAS1=${measure_final_time_s}
+
+.param MN_W=${mn_w_um}
+.param MN_L=${mn_l_um}
+.param MN_M=${mn_m}
+.param MP_W=${mp_w_um}
+.param MP_L=${mp_l_um}
+.param MP_M=${mp_m}
+
+VDD vdd 0 DC {VDD}
+VIN vin 0 PULSE({VIN_LOW} {VIN_HIGH} {TSTEP} {TRISE} {TFALL} {TPW} {TPER})
+
+XCOMP vin out vdd 0 ${schematic_cell_name}
++ MN_W=MN_W MN_L=MN_L MN_M=MN_M
++ MP_W=MP_W MP_L=MP_L MP_M=MP_M
+
+CL out 0 {CL}
+
+.tran ${tran_step_s} ${tran_stop_s}
+.measure tran vout_initial_v FIND v(out) AT={TMEAS0}
+.measure tran vout_final_v FIND v(out) AT={TMEAS1}
+.measure tran delay_s TRIG v(vin) VAL={VTH} RISE=1 TARG v(out) VAL={VTH} FALL=1
+.measure tran supply_current_avg AVG i(VDD) FROM={TMEAS0} TO={TMEAS1}
+.measure tran power_w PARAM='abs(supply_current_avg * VDD)'
+
+.end

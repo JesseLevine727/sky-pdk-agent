@@ -12,6 +12,17 @@ class SpecIoTest(unittest.TestCase):
         self.assertEqual(params["schematic_cell_name"], "ota_5t")
         self.assertTrue(params["schematic_cell_netlist"].endswith("circuits/ota/schematic/ota_5t.spice"))
 
+    def test_normalizes_top_level_netlist_paths(self):
+        spec = {
+            "design": "chain",
+            "opamp_cell_netlist": "circuits/ota/schematic/ota_5t.spice",
+        }
+
+        params = flatten_for_template(spec)
+
+        self.assertTrue(params["opamp_cell_netlist"].endswith("circuits/ota/schematic/ota_5t.spice"))
+        self.assertTrue(params["opamp_cell_netlist"].startswith("/"))
+
 
 if __name__ == "__main__":
     unittest.main()

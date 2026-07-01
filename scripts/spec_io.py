@@ -107,7 +107,7 @@ def flatten_for_template(spec: dict[str, Any]) -> dict[str, str]:
     for key, value in spec.items():
         if key.startswith("_") or key in params or isinstance(value, (dict, list)):
             continue
-        params[key] = value
+        params[key] = normalize_template_path(value) if key.endswith(("_path", "_netlist", "_dir")) else value
 
     simulation = spec.get("simulation", {})
     if isinstance(simulation, dict):

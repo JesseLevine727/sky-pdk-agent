@@ -1,0 +1,9 @@
+* SKY130 static CMOS comparator/inverter threshold detector.
+* Source of truth is specs/comparator.yaml for sizing and testbench parameters.
+.subckt static_comparator vin out vdd vss
++ params: MN_W=1 MN_L=0.15 MN_M=1
++ params: MP_W=2.5 MP_L=0.15 MP_M=1
+
+XMN out vin vss vss sky130_fd_pr__nfet_01v8 w=MN_W l=MN_L nf=MN_M
+XMP out vin vdd vdd sky130_fd_pr__pfet_01v8 w=MP_W l=MP_L nf=MP_M
+.ends static_comparator

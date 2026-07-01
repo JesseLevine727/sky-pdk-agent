@@ -20,15 +20,20 @@ as simulation, DRC, LVS, or PEX evidence.
    named corners and load cases.
 9. Use `make eval-current-mirror` as the smoke pattern for adding a simpler
    one-testbench analog block.
-10. Use `make agent-ota` for bounded recursive sizing loops when multiple
+10. Use `make plan-opamp-comparator-chain` as the reference pattern for turning
+   a natural-language-style mixed-signal request into a file-based plan.
+11. Use `make eval-comparator` before
+   `make eval-opamp-comparator-chain` when validating the OTA-to-comparator
+   mixed-signal chain.
+12. Use `make agent-ota` for bounded recursive sizing loops when multiple
    evaluation cases miss or trade off against each other.
-11. Use `make search-ota` for configured schematic candidate axes, and
+13. Use `make search-ota` for configured schematic candidate axes, and
     `make search-ota-postlayout-quick` when schematic winners may trade off
     against layout parasitics.
-12. After schematic closure, run physical targets in order:
+14. After schematic closure, run physical targets in order:
     `make layout-ota`, `make drc-ota`, `make lvs-ota`, `make pex-ota`, and
     `make postlayout-ota`.
-13. Prefer `make signoff-ota` when the goal is complete end-to-end evidence
+15. Prefer `make signoff-ota` when the goal is complete end-to-end evidence
     rather than debugging one physical stage.
 
 ## Verification Rules
@@ -50,6 +55,9 @@ as simulation, DRC, LVS, or PEX evidence.
   when a hard pass/fail gate is required.
 - `make eval-current-mirror` is a strict one-testbench block-template check.
   Treat it as the reference pattern for simple new analog cells.
+- `make eval-comparator` and `make eval-opamp-comparator-chain` are strict
+  transient checks for the mixed-signal intake example. Treat the chain report
+  as interface evidence, not standalone opamp or comparator closure.
 - `make agent-ota` ranks candidate sizing changes but does not change the source
   spec. `make agent-ota-apply` may update the spec only when the best candidate
   passes every named evaluation case.

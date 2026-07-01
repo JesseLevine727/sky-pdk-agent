@@ -1,0 +1,69 @@
+* OTA-to-comparator hierarchical mixed-signal chain transient characterization
+* Generated from ${spec_path}
+
+.lib "${model_lib}" ${corner}
+.include "${opamp_cell_netlist}"
+.include "${comparator_cell_netlist}"
+.temp ${temperature_c}
+
+.param VDD=${supply_v}
+.param VIN_LOW=${sensor_low_v}
+.param VIN_HIGH=${sensor_high_v}
+.param VREF=${reference_v}
+.param VBIAS=${bias_tail_v}
+.param VTH=${threshold_v}
+.param TSTEP=${input_step_time_s}
+.param TRISE=${input_rise_time_s}
+.param TFALL=${input_fall_time_s}
+.param TPW=${pulse_width_s}
+.param TPER=${pulse_period_s}
+.param CAMP=${amp_load_cap_f}
+.param COUT=${comparator_load_cap_f}
+.param TMEAS0=${measure_initial_time_s}
+.param TMEAS1=${measure_final_time_s}
+
+.param OPAMP_MN_IN_W=${opamp_mn_in_w_um}
+.param OPAMP_MN_IN_L=${opamp_mn_in_l_um}
+.param OPAMP_MN_IN_M=${opamp_mn_in_m}
+.param OPAMP_MP_LOAD_W=${opamp_mp_load_w_um}
+.param OPAMP_MP_LOAD_L=${opamp_mp_load_l_um}
+.param OPAMP_MP_LOAD_M=${opamp_mp_load_m}
+.param OPAMP_MN_TAIL_W=${opamp_mn_tail_w_um}
+.param OPAMP_MN_TAIL_L=${opamp_mn_tail_l_um}
+.param OPAMP_MN_TAIL_M=${opamp_mn_tail_m}
+
+.param COMP_MN_W=${comp_mn_w_um}
+.param COMP_MN_L=${comp_mn_l_um}
+.param COMP_MN_M=${comp_mn_m}
+.param COMP_MP_W=${comp_mp_w_um}
+.param COMP_MP_L=${comp_mp_l_um}
+.param COMP_MP_M=${comp_mp_m}
+
+VDD vdd 0 DC {VDD}
+VSENSOR sensor 0 PULSE({VIN_LOW} {VIN_HIGH} {TSTEP} {TRISE} {TFALL} {TPW} {TPER})
+VREF ref 0 DC {VREF}
+VBIAS bias 0 DC {VBIAS}
+
+XOPAMP sensor ref amp_out vdd 0 bias ${opamp_cell_name}
++ MN_IN_W=OPAMP_MN_IN_W MN_IN_L=OPAMP_MN_IN_L MN_IN_M=OPAMP_MN_IN_M
++ MP_LOAD_W=OPAMP_MP_LOAD_W MP_LOAD_L=OPAMP_MP_LOAD_L MP_LOAD_M=OPAMP_MP_LOAD_M
++ MN_TAIL_W=OPAMP_MN_TAIL_W MN_TAIL_L=OPAMP_MN_TAIL_L MN_TAIL_M=OPAMP_MN_TAIL_M
+
+XCOMP amp_out dout vdd 0 ${comparator_cell_name}
++ MN_W=COMP_MN_W MN_L=COMP_MN_L MN_M=COMP_MN_M
++ MP_W=COMP_MP_W MP_L=COMP_MP_L MP_M=COMP_MP_M
+
+CAMP amp_out 0 {CAMP}
+COUT dout 0 {COUT}
+
+.tran ${tran_step_s} ${tran_stop_s}
+.measure tran amp_initial_v FIND v(amp_out) AT={TMEAS0}
+.measure tran amp_final_v FIND v(amp_out) AT={TMEAS1}
+.measure tran dout_initial_v FIND v(dout) AT={TMEAS0}
+.measure tran dout_final_v FIND v(dout) AT={TMEAS1}
+.measure tran amp_cross_time_s TRIG v(sensor) VAL={VREF} RISE=1 TARG v(amp_out) VAL={VTH} RISE=1
+.measure tran decision_delay_s TRIG v(sensor) VAL={VREF} RISE=1 TARG v(dout) VAL={VTH} FALL=1
+.measure tran supply_current_avg AVG i(VDD) FROM={TMEAS0} TO={TMEAS1}
+.measure tran power_w PARAM='abs(supply_current_avg * VDD)'
+
+.end

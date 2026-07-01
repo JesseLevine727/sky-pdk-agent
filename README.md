@@ -28,6 +28,9 @@ make render-ota
 make sim-ota
 make eval-ota
 make eval-current-mirror
+make plan-opamp-comparator-chain
+make eval-comparator
+make eval-opamp-comparator-chain
 make agent-ota
 make propose-ota
 make sweep-ota-quick
@@ -52,6 +55,12 @@ returns nonzero on target misses.
 `make eval-current-mirror` runs the NMOS current mirror template through the
 generic single-testbench evaluator and writes
 `circuits/current_mirror/reports/latest_eval.md`.
+
+`make plan-opamp-comparator-chain` turns
+`intents/opamp_comparator_chain.yaml` into a durable implementation plan.
+`make eval-comparator` verifies the static CMOS comparator transient template.
+`make eval-opamp-comparator-chain` verifies the hierarchical mixed-signal
+chain where the closed OTA drives the comparator input.
 
 `make agent-ota` runs a bounded recursive loop: baseline evaluation, miss
 mining, candidate generation, candidate evaluation, ranking, and a durable
@@ -127,15 +136,26 @@ system or package-extracted Magic.
 
 - `specs/ota.yaml`: 5T OTA requirements, starting sizing, and simulation setup
 - `specs/current_mirror.yaml`: NMOS current mirror requirements and sizing
+- `specs/comparator.yaml`: static CMOS comparator transient requirements
+- `specs/opamp_comparator_chain.yaml`: hierarchical OTA-to-comparator chain
+  requirements
 - `specs/primitive_nmos.yaml`: NMOS ID/VGS characterization example
+- `intents/opamp_comparator_chain.yaml`: natural-language-style mixed-signal
+  design intake file
 - `circuits/current_mirror/testbenches/current_mirror_dc.spice.in`: current
   mirror operating-point testbench
+- `circuits/comparator/testbenches/comparator_tran.spice.in`: static
+  comparator transient testbench
+- `circuits/opamp_comparator_chain/testbenches/chain_tran.spice.in`:
+  hierarchical OTA/comparator transient testbench
 - `circuits/ota/testbenches/ota_ac.spice.in`: OTA AC/DC testbench template
 - `circuits/ota/testbenches/ota_ac_postlayout.spice.in`: extracted-layout OTA
   AC/DC testbench template
 - `circuits/ota/layout/magic/ota_5t_layout_manifest.json`: deterministic OTA
   layout intent generated beside the Magic Tcl seed
 - `scripts/run_ngspice.py`: render, run, and parse one SPICE job
+- `scripts/design_intake.py`: convert a design intent YAML file into a
+  deterministic scaffold plan
 - `scripts/evaluate_ota.py`: run named OTA evaluation cases and write a report
 - `scripts/evaluate_single.py`: run one testbench, score targets, and write a
   report for simpler blocks

@@ -1,0 +1,48 @@
+design: static_comparator
+pdk: sky130A
+
+schematic:
+  cell_name: static_comparator
+  cell_netlist: circuits/comparator/schematic/static_comparator.spice
+
+supply_v: 1.8
+temperature_c: 27
+input_low_v: 0.2
+input_high_v: 1.6
+threshold_v: 0.9
+input_step_time_s: 2.0e-8
+input_rise_time_s: 1.0e-9
+input_fall_time_s: 1.0e-9
+pulse_width_s: 8.0e-8
+pulse_period_s: 2.0e-7
+load_cap_f: 5.0e-15
+measure_initial_time_s: 1.0e-8
+measure_final_time_s: 6.0e-8
+
+targets:
+  delay_s:
+    max: 1.0e-8
+  vout_initial_v:
+    min: 1.5
+  vout_final_v:
+    max: 0.2
+  power_w:
+    max: 1.0e-5
+
+simulation:
+  corner: tt
+  model_lib: "$PDK_ROOT/$PDK/libs.tech/ngspice/sky130.lib.spice"
+  tran_step_s: 5.0e-11
+  tran_stop_s: 1.0e-7
+
+devices:
+  mn:
+    model: sky130_fd_pr__nfet_01v8
+    w_um: 1.0
+    l_um: 0.15
+    m: 1
+  mp:
+    model: sky130_fd_pr__pfet_01v8
+    w_um: 2.5
+    l_um: 0.15
+    m: 1

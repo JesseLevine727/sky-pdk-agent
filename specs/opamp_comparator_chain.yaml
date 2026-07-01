@@ -1,0 +1,71 @@
+design: opamp_comparator_chain
+pdk: sky130A
+
+opamp_cell_name: ota_5t
+opamp_cell_netlist: circuits/ota/schematic/ota_5t.spice
+comparator_cell_name: static_comparator
+comparator_cell_netlist: circuits/comparator/schematic/static_comparator.spice
+
+supply_v: 1.8
+temperature_c: 27
+sensor_low_v: 0.895
+sensor_high_v: 0.905
+reference_v: 0.9
+bias_tail_v: 0.7
+threshold_v: 0.9
+input_step_time_s: 2.0e-7
+input_rise_time_s: 1.0e-8
+input_fall_time_s: 1.0e-8
+pulse_width_s: 1.0e-6
+pulse_period_s: 2.0e-6
+amp_load_cap_f: 1.0e-14
+comparator_load_cap_f: 2.0e-14
+measure_initial_time_s: 1.0e-7
+measure_final_time_s: 8.0e-7
+
+targets:
+  amp_final_v:
+    min: 1.2
+  dout_initial_v:
+    min: 1.5
+  dout_final_v:
+    max: 0.2
+  amp_cross_time_s:
+    max: 1.0e-6
+  decision_delay_s:
+    max: 1.0e-6
+  power_w:
+    max: 1.0e-3
+
+simulation:
+  corner: tt
+  model_lib: "$PDK_ROOT/$PDK/libs.tech/ngspice/sky130.lib.spice"
+  tran_step_s: 1.0e-9
+  tran_stop_s: 2.0e-6
+
+devices:
+  opamp_mn_in:
+    model: sky130_fd_pr__nfet_01v8
+    w_um: 15.12
+    l_um: 1.05
+    m: 2
+  opamp_mp_load:
+    model: sky130_fd_pr__pfet_01v8
+    w_um: 26
+    l_um: 1.05
+    m: 2
+  opamp_mn_tail:
+    model: sky130_fd_pr__nfet_01v8
+    w_um: 8
+    l_um: 1.0
+    m: 1
+  comp_mn:
+    model: sky130_fd_pr__nfet_01v8
+    w_um: 1.0
+    l_um: 0.15
+    m: 1
+  comp_mp:
+    model: sky130_fd_pr__pfet_01v8
+    w_um: 2.5
+    l_um: 0.15
+    m: 1

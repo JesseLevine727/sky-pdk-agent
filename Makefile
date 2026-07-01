@@ -21,7 +21,7 @@ OTA_LAYOUT ?= $(OTA_LAYOUT_DIR)/ota_5t.mag
 OTA_EXTRACTED ?= circuits/ota/layout/extracted/ota_5t_extracted.spice
 OTA_LVS_EXTRACTED ?= circuits/ota/layout/extracted/ota_5t_lvs.spice
 
-.PHONY: check tools netlist-ota render-ota sim-ota eval-ota eval-ota-strict agent-ota agent-ota-apply agent-ota-smoke render-primitive sim-primitive render-current-mirror sim-current-mirror eval-current-mirror plan-opamp-comparator-chain propose-ota sweep-ota sweep-ota-quick search-ota search-ota-postlayout-quick layout-ota drc-ota extract-ota-lvs pex-ota lvs-ota postlayout-ota signoff-ota skill-validate
+.PHONY: check tools netlist-ota render-ota sim-ota eval-ota eval-ota-strict agent-ota agent-ota-apply agent-ota-smoke render-primitive sim-primitive render-current-mirror sim-current-mirror eval-current-mirror plan-opamp-comparator-chain render-comparator sim-comparator eval-comparator render-opamp-comparator-chain sim-opamp-comparator-chain eval-opamp-comparator-chain propose-ota sweep-ota sweep-ota-quick search-ota search-ota-postlayout-quick layout-ota drc-ota extract-ota-lvs pex-ota lvs-ota postlayout-ota signoff-ota skill-validate
 
 check: tools skill-validate
 	$(PYTHON) -m unittest discover -s tests
@@ -92,6 +92,24 @@ eval-current-mirror:
 
 plan-opamp-comparator-chain:
 	$(PYTHON) scripts/design_intake.py --intent $(OPAMP_COMPARATOR_INTENT) --report circuits/opamp_comparator_chain/reports/design_plan.md --scaffold
+
+render-comparator:
+	$(PYTHON) scripts/run_ngspice.py --spec $(COMPARATOR_SPEC) --template $(COMPARATOR_TEMPLATE) --out-dir circuits/comparator/sim/runs/render --dry-run
+
+sim-comparator:
+	$(PYTHON) scripts/run_ngspice.py --spec $(COMPARATOR_SPEC) --template $(COMPARATOR_TEMPLATE) --out-dir circuits/comparator/sim/runs/latest
+
+eval-comparator:
+	$(PYTHON) scripts/evaluate_single.py --spec $(COMPARATOR_SPEC) --template $(COMPARATOR_TEMPLATE) --out-dir circuits/comparator/sim/runs/eval --report circuits/comparator/reports/latest_eval.md --strict
+
+render-opamp-comparator-chain: netlist-ota
+	$(PYTHON) scripts/run_ngspice.py --spec $(OPAMP_COMPARATOR_CHAIN_SPEC) --template $(OPAMP_COMPARATOR_CHAIN_TEMPLATE) --out-dir circuits/opamp_comparator_chain/sim/runs/render --dry-run
+
+sim-opamp-comparator-chain: netlist-ota
+	$(PYTHON) scripts/run_ngspice.py --spec $(OPAMP_COMPARATOR_CHAIN_SPEC) --template $(OPAMP_COMPARATOR_CHAIN_TEMPLATE) --out-dir circuits/opamp_comparator_chain/sim/runs/latest
+
+eval-opamp-comparator-chain: netlist-ota
+	$(PYTHON) scripts/evaluate_single.py --spec $(OPAMP_COMPARATOR_CHAIN_SPEC) --template $(OPAMP_COMPARATOR_CHAIN_TEMPLATE) --out-dir circuits/opamp_comparator_chain/sim/runs/eval --report circuits/opamp_comparator_chain/reports/latest_eval.md --strict
 
 propose-ota:
 	$(PYTHON) scripts/propose_sizing.py --spec $(SPEC) --measures circuits/ota/sim/runs/latest/measures.json --out circuits/ota/reports/sizing_proposal.json
