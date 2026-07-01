@@ -21,19 +21,20 @@ For background on the repo contract, read `references/sky130-flow.md` when worki
 6. Run `make eval-ota` when schematic behavior needs named process, voltage, temperature, or load coverage.
 7. Run `make eval-current-mirror` when validating the simpler one-testbench block template pattern.
 8. Run `make plan-opamp-comparator-chain`, `make eval-comparator`, and `make eval-opamp-comparator-chain` when validating the mixed-signal intake pattern.
-9. If one target misses, use `scripts/propose_sizing.py` for a local proposal when the block supports it, or classify the miss as block-level versus interface-level.
-10. If multiple evaluation cases trade off, run `make agent-ota` and inspect `circuits/ota/reports/agent_loop.md`.
-11. If a passing recursive candidate exists, apply it with `make agent-ota-apply`; otherwise broaden the candidate axes or escalate topology.
-12. If tradeoffs need a broader one-metric sweep, run `scripts/sweep_ota.py` and inspect `ranked_results.json`.
-13. If schematic winners may trade off against parasitics, run `make search-ota-postlayout-quick` and inspect `circuits/ota/reports/search_postlayout_summary.md`.
-14. Apply the least aggressive passing candidate to the source spec, then rerun the canonical Make target and `make eval-ota`.
-15. Record durable design evidence in `circuits/<block>/reports/design_notes.md`.
-16. Commit and push after each coherent verified milestone in long-running agent work.
-17. Move to Xschem, layout, DRC, LVS, and PEX only after schematic simulation has evidence.
-18. For OTA physical work, run `make layout-ota`, `make drc-ota`, `make lvs-ota`, `make pex-ota`, and `make postlayout-ota` in order.
-19. Prefer `make signoff-ota` for complete OTA closure evidence.
-20. Treat DRC/LVS failures as flow or layout blockers and post-layout target misses as design misses unless the simulator run itself failed.
-21. Use layout manifests as structured generator intent; keep DRC, LVS, PEX, and post-layout simulation as the closure evidence.
+9. Run `make signoff-comparator` when validating the static comparator physical template.
+10. If one target misses, use `scripts/propose_sizing.py` for a local proposal when the block supports it, or classify the miss as block-level versus interface-level.
+11. If multiple evaluation cases trade off, run `make agent-ota` and inspect `circuits/ota/reports/agent_loop.md`.
+12. If a passing recursive candidate exists, apply it with `make agent-ota-apply`; otherwise broaden the candidate axes or escalate topology.
+13. If tradeoffs need a broader one-metric sweep, run `scripts/sweep_ota.py` and inspect `ranked_results.json`.
+14. If schematic winners may trade off against parasitics, run `make search-ota-postlayout-quick` and inspect `circuits/ota/reports/search_postlayout_summary.md`.
+15. Apply the least aggressive passing candidate to the source spec, then rerun the canonical Make target and `make eval-ota`.
+16. Record durable design evidence in `circuits/<block>/reports/design_notes.md`.
+17. Commit and push after each coherent verified milestone in long-running agent work.
+18. Move to Xschem, layout, DRC, LVS, and PEX only after schematic simulation has evidence.
+19. For OTA physical work, run `make layout-ota`, `make drc-ota`, `make lvs-ota`, `make pex-ota`, and `make postlayout-ota` in order.
+20. Prefer `make signoff-ota` or `make signoff-comparator` when complete end-to-end evidence is needed for a supported physical template.
+21. Treat DRC/LVS failures as flow or layout blockers and post-layout target misses as design misses unless the simulator run itself failed.
+22. Use layout manifests as structured generator intent; keep DRC, LVS, PEX, and post-layout simulation as the closure evidence.
 
 ## Commands
 
@@ -66,6 +67,7 @@ Plan and evaluate the OTA-to-comparator mixed-signal intake example:
 ```bash
 make plan-opamp-comparator-chain
 make eval-comparator
+make signoff-comparator
 make eval-opamp-comparator-chain
 ```
 
@@ -166,10 +168,10 @@ make check
 - For sweeps, report the top ranked candidate, whether it passed, and the chosen overrides.
 - For evaluations, report the pass/fail count, failing cases, and `circuits/ota/reports/latest_eval.md`.
 - For one-testbench blocks, report target pass/fail and the block report, such as `circuits/current_mirror/reports/latest_eval.md`.
-- For mixed-signal intake work, report the intent, design plan, block report, and chain report.
+- For mixed-signal intake work, report the intent, design plan, block report, physical template report when present, and chain report.
 - For recursive agent loops, report the baseline score, best candidate, whether it was applied, and `circuits/ota/reports/agent_loop.md`.
 - For candidate search, report whether ranking used schematic-only or post-layout evidence and cite `circuits/ota/reports/search_summary.md` or `circuits/ota/reports/search_postlayout_summary.md`.
-- For signoff orchestration, report each stage result and `circuits/ota/reports/signoff_summary.md`.
+- For signoff orchestration, report each stage result and the block signoff summary, such as `circuits/ota/reports/signoff_summary.md` or `circuits/comparator/reports/signoff_summary.md`.
 - For layout generation, report the manifest path when present, such as `circuits/ota/layout/magic/ota_5t_layout_manifest.json`.
 - For DRC, report the exact DRC error count and `circuits/ota/reports/drc/drc.md`.
 - For LVS, report whether Netgen printed `Netlists match uniquely` and cite `circuits/ota/reports/lvs_ota.md`.

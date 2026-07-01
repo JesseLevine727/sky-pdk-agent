@@ -50,10 +50,13 @@ files:
     - circuits/comparator/schematic/static_comparator.spice
   testbenches:
     - circuits/comparator/testbenches/comparator_tran.spice.in
+    - circuits/comparator/testbenches/comparator_tran_postlayout.spice.in
     - circuits/opamp_comparator_chain/testbenches/chain_tran.spice.in
   reports:
     - circuits/opamp_comparator_chain/reports/design_plan.md
     - circuits/comparator/reports/latest_eval.md
+    - circuits/comparator/reports/signoff_summary.md
+    - circuits/comparator/reports/postlayout_eval.md
     - circuits/opamp_comparator_chain/reports/latest_eval.md
     - circuits/opamp_comparator_chain/reports/design_notes.md
 
@@ -61,10 +64,12 @@ acceptance:
   commands:
     - make plan-opamp-comparator-chain
     - make eval-comparator
+    - make signoff-comparator
     - make eval-opamp-comparator-chain
     - make check
   checks:
     - Comparator transient evaluation passes all configured targets.
+    - Comparator physical signoff passes DRC, LVS, PEX, and post-layout eval.
     - Chain transient evaluation passes all configured targets.
     - All generated simulation evidence remains under circuits/**/sim/runs/.
     - Durable Markdown reports summarize the verified milestone.

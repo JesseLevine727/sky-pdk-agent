@@ -16,13 +16,18 @@ OTA_POSTLAYOUT_TEMPLATE ?= circuits/ota/testbenches/ota_ac_postlayout.spice.in
 PRIMITIVE_TEMPLATE ?= circuits/primitives/nmos_id_vgs/testbenches/id_vgs.spice.in
 CURRENT_MIRROR_TEMPLATE ?= circuits/current_mirror/testbenches/current_mirror_dc.spice.in
 COMPARATOR_TEMPLATE ?= circuits/comparator/testbenches/comparator_tran.spice.in
+COMPARATOR_POSTLAYOUT_TEMPLATE ?= circuits/comparator/testbenches/comparator_tran_postlayout.spice.in
 OPAMP_COMPARATOR_CHAIN_TEMPLATE ?= circuits/opamp_comparator_chain/testbenches/chain_tran.spice.in
 OTA_LAYOUT_DIR ?= circuits/ota/layout/magic
 OTA_LAYOUT ?= $(OTA_LAYOUT_DIR)/ota_5t.mag
 OTA_EXTRACTED ?= circuits/ota/layout/extracted/ota_5t_extracted.spice
 OTA_LVS_EXTRACTED ?= circuits/ota/layout/extracted/ota_5t_lvs.spice
+COMPARATOR_LAYOUT_DIR ?= circuits/comparator/layout/magic
+COMPARATOR_LAYOUT ?= $(COMPARATOR_LAYOUT_DIR)/static_comparator.mag
+COMPARATOR_EXTRACTED ?= circuits/comparator/layout/extracted/static_comparator_extracted.spice
+COMPARATOR_LVS_EXTRACTED ?= circuits/comparator/layout/extracted/static_comparator_lvs.spice
 
-.PHONY: check tools netlist-ota render-ota sim-ota eval-ota eval-ota-strict agent-ota agent-ota-apply agent-ota-smoke render-primitive sim-primitive render-current-mirror sim-current-mirror eval-current-mirror plan-opamp-comparator-chain render-comparator sim-comparator eval-comparator render-opamp-comparator-chain sim-opamp-comparator-chain eval-opamp-comparator-chain propose-ota sweep-ota sweep-ota-quick search-ota search-ota-postlayout-quick layout-ota drc-ota extract-ota-lvs pex-ota lvs-ota postlayout-ota signoff-ota skill-validate
+.PHONY: check tools netlist-ota render-ota sim-ota eval-ota eval-ota-strict agent-ota agent-ota-apply agent-ota-smoke render-primitive sim-primitive render-current-mirror sim-current-mirror eval-current-mirror plan-opamp-comparator-chain netlist-comparator render-comparator sim-comparator eval-comparator layout-comparator drc-comparator extract-comparator-lvs lvs-comparator pex-comparator postlayout-comparator signoff-comparator render-opamp-comparator-chain sim-opamp-comparator-chain eval-opamp-comparator-chain propose-ota sweep-ota sweep-ota-quick search-ota search-ota-postlayout-quick layout-ota drc-ota extract-ota-lvs pex-ota lvs-ota postlayout-ota signoff-ota skill-validate
 
 check: tools skill-validate
 	$(PYTHON) -m unittest discover -s tests
@@ -94,14 +99,38 @@ eval-current-mirror:
 plan-opamp-comparator-chain:
 	$(PYTHON) scripts/design_intake.py --intent $(OPAMP_COMPARATOR_INTENT) --catalog $(ANALOG_TEMPLATE_CATALOG) --report circuits/opamp_comparator_chain/reports/design_plan.md --scaffold
 
-render-comparator:
+netlist-comparator:
+	$(PYTHON) scripts/render_comparator_cell.py --spec $(COMPARATOR_SPEC) --out circuits/comparator/schematic/static_comparator.spice
+
+render-comparator: netlist-comparator
 	$(PYTHON) scripts/run_ngspice.py --spec $(COMPARATOR_SPEC) --template $(COMPARATOR_TEMPLATE) --out-dir circuits/comparator/sim/runs/render --dry-run
 
-sim-comparator:
+sim-comparator: netlist-comparator
 	$(PYTHON) scripts/run_ngspice.py --spec $(COMPARATOR_SPEC) --template $(COMPARATOR_TEMPLATE) --out-dir circuits/comparator/sim/runs/latest
 
-eval-comparator:
+eval-comparator: netlist-comparator
 	$(PYTHON) scripts/evaluate_single.py --spec $(COMPARATOR_SPEC) --template $(COMPARATOR_TEMPLATE) --out-dir circuits/comparator/sim/runs/eval --report circuits/comparator/reports/latest_eval.md --strict
+
+layout-comparator: netlist-comparator
+	$(PYTHON) scripts/generate_comparator_magic_layout.py --spec $(COMPARATOR_SPEC) --out-dir $(COMPARATOR_LAYOUT_DIR) --run
+
+drc-comparator: layout-comparator
+	scripts/run_magic_drc.sh $(COMPARATOR_LAYOUT) circuits/comparator/reports/drc
+
+extract-comparator-lvs: layout-comparator
+	scripts/run_magic_extract_lvs.sh $(COMPARATOR_LAYOUT) static_comparator $(COMPARATOR_LVS_EXTRACTED)
+
+lvs-comparator: netlist-comparator extract-comparator-lvs
+	scripts/run_netgen_lvs.sh $(COMPARATOR_LVS_EXTRACTED) circuits/comparator/schematic/static_comparator.spice static_comparator circuits/comparator/reports/lvs_comparator.md
+
+pex-comparator: layout-comparator
+	scripts/run_magic_pex.sh $(COMPARATOR_LAYOUT) static_comparator $(COMPARATOR_EXTRACTED)
+
+postlayout-comparator: pex-comparator
+	$(PYTHON) scripts/evaluate_single.py --spec $(COMPARATOR_SPEC) --template $(COMPARATOR_POSTLAYOUT_TEMPLATE) --out-dir circuits/comparator/sim/runs/postlayout_eval --report circuits/comparator/reports/postlayout_eval.md --strict
+
+signoff-comparator:
+	$(PYTHON) scripts/signoff_block.py --spec $(COMPARATOR_SPEC) --report circuits/comparator/reports/signoff_summary.md --json circuits/comparator/reports/signoff_summary.json
 
 render-opamp-comparator-chain: netlist-ota
 	$(PYTHON) scripts/run_ngspice.py --spec $(OPAMP_COMPARATOR_CHAIN_SPEC) --template $(OPAMP_COMPARATOR_CHAIN_TEMPLATE) --out-dir circuits/opamp_comparator_chain/sim/runs/render --dry-run

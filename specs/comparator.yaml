@@ -5,6 +5,25 @@ schematic:
   cell_name: static_comparator
   cell_netlist: circuits/comparator/schematic/static_comparator.spice
 
+layout:
+  cell_name: static_comparator
+  magic_dir: circuits/comparator/layout/magic
+  extracted_netlist: circuits/comparator/layout/extracted/static_comparator_extracted.spice
+  lvs_extracted_netlist: circuits/comparator/layout/extracted/static_comparator_lvs.spice
+
+flow:
+  schematic_generator: scripts/render_comparator_cell.py
+  schematic_template: circuits/comparator/testbenches/comparator_tran.spice.in
+  layout_generator: scripts/generate_comparator_magic_layout.py
+  postlayout_template: circuits/comparator/testbenches/comparator_tran_postlayout.spice.in
+  evaluator: scripts/evaluate_single.py
+  reports_dir: circuits/comparator/reports
+  sim_root: circuits/comparator/sim/runs
+  schematic_report: circuits/comparator/reports/latest_eval.md
+  postlayout_report: circuits/comparator/reports/postlayout_eval.md
+  drc_report_dir: circuits/comparator/reports/drc
+  lvs_report: circuits/comparator/reports/lvs_comparator.md
+
 supply_v: 1.8
 temperature_c: 27
 input_low_v: 0.2

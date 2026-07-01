@@ -25,16 +25,19 @@ as simulation, DRC, LVS, or PEX evidence.
 11. Use `make eval-comparator` before
    `make eval-opamp-comparator-chain` when validating the OTA-to-comparator
    mixed-signal chain.
-12. Use `make agent-ota` for bounded recursive sizing loops when multiple
+12. Use `make signoff-comparator` for the static comparator schematic-to-layout
+   physical closure reference pattern.
+13. Use `make agent-ota` for bounded recursive sizing loops when multiple
    evaluation cases miss or trade off against each other.
-13. Use `make search-ota` for configured schematic candidate axes, and
+14. Use `make search-ota` for configured schematic candidate axes, and
     `make search-ota-postlayout-quick` when schematic winners may trade off
     against layout parasitics.
-14. After schematic closure, run physical targets in order:
+15. After schematic closure, run physical targets in order:
     `make layout-ota`, `make drc-ota`, `make lvs-ota`, `make pex-ota`, and
     `make postlayout-ota`.
-15. Prefer `make signoff-ota` when the goal is complete end-to-end evidence
-    rather than debugging one physical stage.
+16. Prefer `make signoff-ota` or `make signoff-comparator` when the goal is
+    complete end-to-end evidence for a supported physical template rather than
+    debugging one physical stage.
 
 ## Verification Rules
 
@@ -58,6 +61,8 @@ as simulation, DRC, LVS, or PEX evidence.
 - `make eval-comparator` and `make eval-opamp-comparator-chain` are strict
   transient checks for the mixed-signal intake example. Treat the chain report
   as interface evidence, not standalone opamp or comparator closure.
+- `make signoff-comparator` must pass all configured stages before claiming the
+  static comparator has schematic-to-layout physical closure.
 - `make agent-ota` ranks candidate sizing changes but does not change the source
   spec. `make agent-ota-apply` may update the spec only when the best candidate
   passes every named evaluation case.

@@ -2,7 +2,7 @@
 
 - Spec: `specs/comparator.yaml`
 - Template: `circuits/comparator/testbenches/comparator_tran.spice.in`
-- Run dir: `circuits/comparator/sim/runs/eval`
+- Run dir: `circuits/comparator/sim/runs/signoff_eval`
 - Overall: PASS
 
 | Metric | Value |

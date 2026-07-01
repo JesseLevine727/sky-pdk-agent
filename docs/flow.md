@@ -57,12 +57,12 @@ the evidence.
 
 - Working: tool checks, primitive sim, OTA nominal sim, multi-case OTA eval,
   current mirror template eval, mixed-signal design intake planning, static
-  comparator eval, OTA-to-comparator chain eval, recursive candidate ranking,
-  sizing proposal reports, deterministic sweep reports, schematic SPICE source
-  generation, deterministic Magic layout seed plus layout manifest,
-  spec-driven schematic search, isolated post-layout candidate search, Magic
-  DRC, Netgen LVS, Magic PEX, post-layout evaluation, and reusable block
-  signoff orchestration.
+  comparator eval, comparator physical signoff, OTA-to-comparator chain eval,
+  recursive candidate ranking, sizing proposal reports, deterministic sweep
+  reports, schematic SPICE source generation, deterministic Magic layout seeds
+  plus layout manifests, spec-driven schematic search, isolated post-layout
+  candidate search, Magic DRC, Netgen LVS, Magic PEX, post-layout evaluation,
+  and reusable block signoff orchestration.
 - Current schematic OTA result: `make eval-ota-strict` passes all 4 named cases.
 - Current physical OTA result: `make drc-ota` reports 0 Magic DRC errors and
   `make lvs-ota` reports `Netlists match uniquely`.
@@ -77,6 +77,9 @@ the evidence.
 - Current mixed-signal result: `make eval-comparator` passes the static CMOS
   comparator transient spec, and `make eval-opamp-comparator-chain` passes the
   hierarchical OTA-to-comparator transient spec.
+- Current comparator physical result: `make signoff-comparator` passes all 8
+  stages, with 0 Magic DRC errors, `Netlists match uniquely`, and passing
+  post-layout transient evaluation.
 
 ## Periodic Push Rule
 

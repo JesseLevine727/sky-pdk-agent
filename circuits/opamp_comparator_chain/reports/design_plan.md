@@ -25,7 +25,7 @@ for recursive block-level and chain-level improvement.
 | Block | Kind | Matched | Schematic | Layout | LVS/PEX | Post-layout |
 | --- | --- | :---: | :---: | :---: | :---: | :---: |
 | `opamp` | `ota_5t` | yes | yes | yes | yes | yes |
-| `comparator` | `static_cmos_comparator` | yes | yes | no | no | no |
+| `comparator` | `static_cmos_comparator` | yes | yes | yes | yes | yes |
 | `opamp_comparator_chain` | `hierarchical_mixed_signal_testbench` | yes | yes | no | no | no |
 
 ## Interfaces
@@ -38,24 +38,29 @@ for recursive block-level and chain-level improvement.
 
 - `circuits/opamp_comparator_chain/reports/design_plan.md`
 - `circuits/comparator/reports/latest_eval.md`
+- `circuits/comparator/reports/signoff_summary.md`
+- `circuits/comparator/reports/postlayout_eval.md`
 - `circuits/opamp_comparator_chain/reports/latest_eval.md`
 - `circuits/opamp_comparator_chain/reports/design_notes.md`
 - `circuits/comparator/schematic/static_comparator.spice`
 - `specs/comparator.yaml`
 - `specs/opamp_comparator_chain.yaml`
 - `circuits/comparator/testbenches/comparator_tran.spice.in`
+- `circuits/comparator/testbenches/comparator_tran_postlayout.spice.in`
 - `circuits/opamp_comparator_chain/testbenches/chain_tran.spice.in`
 
 ## Acceptance Commands
 
 - `make plan-opamp-comparator-chain`
 - `make eval-comparator`
+- `make signoff-comparator`
 - `make eval-opamp-comparator-chain`
 - `make check`
 
 ## Acceptance Checks
 
 - Comparator transient evaluation passes all configured targets.
+- Comparator physical signoff passes DRC, LVS, PEX, and post-layout eval.
 - Chain transient evaluation passes all configured targets.
 - All generated simulation evidence remains under circuits/**/sim/runs/.
 - Durable Markdown reports summarize the verified milestone.

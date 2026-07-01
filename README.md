@@ -30,6 +30,7 @@ make eval-ota
 make eval-current-mirror
 make plan-opamp-comparator-chain
 make eval-comparator
+make signoff-comparator
 make eval-opamp-comparator-chain
 make agent-ota
 make propose-ota
@@ -59,6 +60,8 @@ generic single-testbench evaluator and writes
 `make plan-opamp-comparator-chain` turns
 `intents/opamp_comparator_chain.yaml` into a durable implementation plan.
 `make eval-comparator` verifies the static CMOS comparator transient template.
+`make signoff-comparator` runs schematic eval, deterministic Magic layout, DRC,
+LVS, PEX, and post-layout transient evaluation for the comparator.
 `make eval-opamp-comparator-chain` verifies the hierarchical mixed-signal
 chain where the closed OTA drives the comparator input.
 
@@ -146,6 +149,8 @@ system or package-extracted Magic.
   mirror operating-point testbench
 - `circuits/comparator/testbenches/comparator_tran.spice.in`: static
   comparator transient testbench
+- `circuits/comparator/testbenches/comparator_tran_postlayout.spice.in`:
+  extracted-layout static comparator transient testbench
 - `circuits/opamp_comparator_chain/testbenches/chain_tran.spice.in`:
   hierarchical OTA/comparator transient testbench
 - `circuits/ota/testbenches/ota_ac.spice.in`: OTA AC/DC testbench template
@@ -156,6 +161,10 @@ system or package-extracted Magic.
 - `scripts/run_ngspice.py`: render, run, and parse one SPICE job
 - `scripts/design_intake.py`: convert a design intent YAML file into a
   deterministic scaffold plan
+- `scripts/render_comparator_cell.py`: generate the static comparator
+  schematic source from `specs/comparator.yaml`
+- `scripts/generate_comparator_magic_layout.py`: generate the deterministic
+  static comparator Magic layout seed and manifest
 - `scripts/evaluate_ota.py`: run named OTA evaluation cases and write a report
 - `scripts/evaluate_single.py`: run one testbench, score targets, and write a
   report for simpler blocks

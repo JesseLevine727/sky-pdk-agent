@@ -18,6 +18,7 @@ Commands:
 make check
 make plan-opamp-comparator-chain
 make eval-comparator
+make signoff-comparator
 make eval-opamp-comparator-chain
 make eval-ota
 make agent-ota
@@ -61,11 +62,15 @@ a static CMOS comparator and a hierarchical OTA-to-comparator transient chain:
 ```bash
 make plan-opamp-comparator-chain
 make eval-comparator
+make signoff-comparator
 make eval-opamp-comparator-chain
 ```
 
 The current chain passes its nominal transient targets and reports a decision
 delay of `1.911959e-08 s` with `3.11317e-05 W` average power.
+The comparator itself now has complete physical signoff through
+`make signoff-comparator`: Magic DRC reports 0 errors, Netgen reports
+`Netlists match uniquely`, and post-layout transient evaluation passes.
 
 ## Next Stack Stages
 

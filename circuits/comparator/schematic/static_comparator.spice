@@ -1,5 +1,5 @@
-* SKY130 static CMOS comparator/inverter threshold detector.
-* Source of truth is specs/comparator.yaml for sizing and testbench parameters.
+* SKY130 static CMOS comparator schematic source generated from specs/comparator.yaml
+* Source of truth is the YAML spec; rerun `make netlist-comparator` after sizing changes.
 .subckt static_comparator vin out vdd vss
 + params: MN_W=1 MN_L=0.15 MN_M=1
 + params: MP_W=2.5 MP_L=0.15 MP_M=1

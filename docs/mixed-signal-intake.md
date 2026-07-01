@@ -18,6 +18,7 @@ The first implemented example is:
 ```bash
 make plan-opamp-comparator-chain
 make eval-comparator
+make signoff-comparator
 make eval-opamp-comparator-chain
 ```
 
@@ -26,6 +27,7 @@ Evidence:
 - Intent: `intents/opamp_comparator_chain.yaml`
 - Plan: `circuits/opamp_comparator_chain/reports/design_plan.md`
 - Comparator report: `circuits/comparator/reports/latest_eval.md`
+- Comparator signoff: `circuits/comparator/reports/signoff_summary.md`
 - Chain report: `circuits/opamp_comparator_chain/reports/latest_eval.md`
 
 ## Current Example
@@ -46,10 +48,19 @@ The committed nominal result passes:
 - Chain output high/low: `1.799997 V` / `0.0001339365 V`
 - Chain power: `3.11317e-05 W`
 
+The comparator block also has physical closure:
+
+- Magic DRC: 0 errors
+- Netgen LVS: `Netlists match uniquely`
+- Post-layout comparator delay: `1.270771e-10 s`
+- Post-layout comparator power: `7.18641e-08 W`
+
 ## Limits
 
 The intake file is not an automatic topology inventor. It is a deterministic
 contract that lets Codex turn a user description into explicit files, commands,
-and acceptance checks. New arbitrary circuits still need a topology family,
-testbench definitions, measurable targets, and signoff stages before they can
-be treated as verified.
+and acceptance checks. End-to-end physical claims are limited to matched
+templates with layout, DRC, LVS, PEX, and post-layout support in
+`templates/analog_blocks.yaml`. At this point the OTA and static comparator are
+physical templates; the hierarchical OTA-to-comparator chain is a schematic
+integration template until a top-level routed layout is added.

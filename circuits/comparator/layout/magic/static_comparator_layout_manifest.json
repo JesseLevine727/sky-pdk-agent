@@ -1,0 +1,174 @@
+{
+  "cell": "static_comparator",
+  "design": "static_comparator",
+  "devices": [
+    {
+      "generated_m": 1,
+      "generated_nf": 1,
+      "guard_ring": true,
+      "instance": "XMN",
+      "l_um": 0.15,
+      "model": "sky130_fd_pr__nfet_01v8",
+      "mos_type": "nmos",
+      "ports_um": {
+        "B": [
+          0.79,
+          0.0
+        ],
+        "D": [
+          0.57,
+          1.285
+        ],
+        "G": [
+          0.79,
+          2.06
+        ],
+        "S": [
+          1.01,
+          1.285
+        ]
+      },
+      "role": "nmos_pull_down",
+      "source_m": 1,
+      "spec_device": "mn",
+      "w_um": 1.0,
+      "x_um": 0.0,
+      "y_um": 0.0
+    },
+    {
+      "generated_m": 1,
+      "generated_nf": 1,
+      "guard_ring": true,
+      "instance": "XMP",
+      "l_um": 0.15,
+      "model": "sky130_fd_pr__pfet_01v8",
+      "mos_type": "pmos",
+      "ports_um": {
+        "B": [
+          0.79,
+          10.0
+        ],
+        "D": [
+          0.57,
+          12.08
+        ],
+        "G": [
+          0.79,
+          13.65
+        ],
+        "S": [
+          1.01,
+          12.08
+        ]
+      },
+      "role": "pmos_pull_up",
+      "source_m": 1,
+      "spec_device": "mp",
+      "w_um": 2.5,
+      "x_um": 0.0,
+      "y_um": 10.0
+    }
+  ],
+  "generated_files": {
+    "magic_layout": "circuits/comparator/layout/magic/static_comparator.mag",
+    "magic_log": "circuits/comparator/layout/magic/static_comparator_layout.log",
+    "tcl_seed": "circuits/comparator/layout/magic/static_comparator_seed.tcl"
+  },
+  "generated_layers": [
+    "locali",
+    "viali",
+    "metal1",
+    "via1",
+    "metal2"
+  ],
+  "generator": "scripts/generate_comparator_magic_layout.py",
+  "notes": [
+    "Coordinates are in microns.",
+    "This manifest records deterministic generator intent; DRC/LVS/PEX reports remain the signoff gates."
+  ],
+  "pdk": "sky130A",
+  "pin_order": [
+    "vin",
+    "out",
+    "vdd",
+    "vss"
+  ],
+  "pins": [
+    {
+      "center_um": [
+        -5.5,
+        6.5
+      ],
+      "layer": "metal1",
+      "name": "vin",
+      "origin_um": [
+        -6.0,
+        6.0
+      ],
+      "port": 0,
+      "size_um": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "center_um": [
+        8.5,
+        6.5
+      ],
+      "layer": "metal1",
+      "name": "out",
+      "origin_um": [
+        8.0,
+        6.0
+      ],
+      "port": 1,
+      "size_um": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "center_um": [
+        8.5,
+        16.5
+      ],
+      "layer": "metal1",
+      "name": "vdd",
+      "origin_um": [
+        8.0,
+        16.0
+      ],
+      "port": 2,
+      "size_um": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "center_um": [
+        8.5,
+        -3.5
+      ],
+      "layer": "metal1",
+      "name": "vss",
+      "origin_um": [
+        8.0,
+        -4.0
+      ],
+      "port": 3,
+      "size_um": [
+        1.0,
+        1.0
+      ]
+    }
+  ],
+  "route_nets": [
+    "vin",
+    "out",
+    "vdd",
+    "vss"
+  ],
+  "schema": "sky-pdk-agent.layout_manifest.v1",
+  "spec": "specs/comparator.yaml"
+}

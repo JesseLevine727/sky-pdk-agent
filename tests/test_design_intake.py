@@ -32,7 +32,8 @@ class DesignIntakeTest(unittest.TestCase):
         self.assertEqual([True, True, True], [match["matched"] for match in plan["template_matches"]])
         comparator = next(match for match in plan["template_matches"] if match["kind"] == "static_cmos_comparator")
         self.assertTrue(comparator["supports"]["schematic_eval"])
-        self.assertFalse(comparator["supports"]["layout"])
+        self.assertTrue(comparator["supports"]["layout"])
+        self.assertEqual("make signoff-comparator", comparator["commands"]["signoff"])
 
     def test_writes_report_and_scaffolds_directories(self):
         intent = load_intent("intents/opamp_comparator_chain.yaml")

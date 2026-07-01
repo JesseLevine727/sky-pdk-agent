@@ -29,18 +29,21 @@ templates:
     supports:
       schematic_eval: true
       recursive_sizing: false
-      layout: false
-      drc: false
-      lvs: false
-      pex: false
-      postlayout_eval: false
+      layout: true
+      drc: true
+      lvs: true
+      pex: true
+      postlayout_eval: true
     specs:
       - specs/comparator.yaml
     commands:
       evaluate: make eval-comparator
+      layout: make layout-comparator
+      signoff: make signoff-comparator
     files:
       schematic: circuits/comparator/schematic/static_comparator.spice
-      report: circuits/comparator/reports/latest_eval.md
+      layout_manifest: circuits/comparator/layout/magic/static_comparator_layout_manifest.json
+      report: circuits/comparator/reports/signoff_summary.md
 
   current_mirror:
     name: NMOS current mirror
