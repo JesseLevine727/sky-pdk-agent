@@ -14,7 +14,7 @@ OTA_LAYOUT ?= $(OTA_LAYOUT_DIR)/ota_5t.mag
 OTA_EXTRACTED ?= circuits/ota/layout/extracted/ota_5t_extracted.spice
 OTA_LVS_EXTRACTED ?= circuits/ota/layout/extracted/ota_5t_lvs.spice
 
-.PHONY: check tools netlist-ota render-ota sim-ota eval-ota eval-ota-strict agent-ota agent-ota-apply agent-ota-smoke render-primitive sim-primitive propose-ota sweep-ota layout-ota drc-ota extract-ota-lvs pex-ota lvs-ota postlayout-ota skill-validate
+.PHONY: check tools netlist-ota render-ota sim-ota eval-ota eval-ota-strict agent-ota agent-ota-apply agent-ota-smoke render-primitive sim-primitive propose-ota sweep-ota layout-ota drc-ota extract-ota-lvs pex-ota lvs-ota postlayout-ota signoff-ota skill-validate
 
 check: tools skill-validate
 	$(PYTHON) -m unittest discover -s tests
@@ -64,6 +64,9 @@ lvs-ota: netlist-ota extract-ota-lvs
 
 postlayout-ota: pex-ota
 	$(PYTHON) scripts/evaluate_ota.py --spec $(SPEC) --template $(OTA_POSTLAYOUT_TEMPLATE) --out-dir circuits/ota/sim/runs/postlayout_eval --report circuits/ota/reports/postlayout_eval.md
+
+signoff-ota:
+	$(PYTHON) scripts/signoff_block.py --spec $(SPEC) --report circuits/ota/reports/signoff_summary.md --json circuits/ota/reports/signoff_summary.json
 
 render-primitive:
 	$(PYTHON) scripts/run_ngspice.py --spec $(PRIMITIVE_SPEC) --template $(PRIMITIVE_TEMPLATE) --out-dir circuits/primitives/nmos_id_vgs/sim/runs/render --dry-run

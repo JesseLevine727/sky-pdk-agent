@@ -9,6 +9,20 @@ layout:
   cell_name: ota_5t
   magic_dir: circuits/ota/layout/magic
   extracted_netlist: circuits/ota/layout/extracted/ota_5t_extracted.spice
+  lvs_extracted_netlist: circuits/ota/layout/extracted/ota_5t_lvs.spice
+
+flow:
+  schematic_generator: scripts/render_ota_cell.py
+  schematic_template: circuits/ota/testbenches/ota_ac.spice.in
+  layout_generator: scripts/generate_ota_magic_layout.py
+  postlayout_template: circuits/ota/testbenches/ota_ac_postlayout.spice.in
+  evaluator: scripts/evaluate_ota.py
+  reports_dir: circuits/ota/reports
+  sim_root: circuits/ota/sim/runs
+  schematic_report: circuits/ota/reports/latest_eval.md
+  postlayout_report: circuits/ota/reports/postlayout_eval.md
+  drc_report_dir: circuits/ota/reports/drc
+  lvs_report: circuits/ota/reports/lvs_ota.md
 
 supply_v: 1.8
 temperature_c: 27
