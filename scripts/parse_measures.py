@@ -62,6 +62,11 @@ def derive_from_printed_tables(
     power = parse_power_from_operating_point(text)
     if power is not None and existing.get("power_w") is None:
         derived["power_w"] = power
+    op_values = parse_operating_point_values(text)
+    if "ref" in op_values and existing.get("vref_v") is None:
+        derived["vref_v"] = op_values["ref"]
+    if "vout#branch" in op_values and existing.get("iout_a") is None:
+        derived["iout_a"] = abs(op_values["vout#branch"])
     return derived
 
 
@@ -95,21 +100,23 @@ def interpolate_unity_gain(rows: list[tuple[float, float, float]]) -> tuple[floa
 
 
 def parse_power_from_operating_point(text: str) -> float | None:
-    vdd_voltage: float | None = None
-    vdd_current: float | None = None
+    op_values = parse_operating_point_values(text)
+    vdd_voltage = op_values.get("vdd")
+    vdd_current = op_values.get("vdd#branch")
+    if vdd_voltage is None or vdd_current is None:
+        return None
+    return abs(vdd_voltage * vdd_current)
+
+
+def parse_operating_point_values(text: str) -> dict[str, float]:
+    values: dict[str, float] = {}
     for line in text.splitlines():
         match = NODE_RE.match(line)
         if not match:
             continue
         name, raw_value = match.groups()
-        value = float(raw_value)
-        if name.lower() == "vdd":
-            vdd_voltage = value
-        elif name.lower() == "vdd#branch":
-            vdd_current = value
-    if vdd_voltage is None or vdd_current is None:
-        return None
-    return abs(vdd_voltage * vdd_current)
+        values[name.lower()] = float(raw_value)
+    return values
 
 
 def parse_measure_file(path: str | Path) -> dict[str, float | None]:

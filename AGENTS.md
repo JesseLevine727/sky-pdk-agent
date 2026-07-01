@@ -18,15 +18,17 @@ as simulation, DRC, LVS, or PEX evidence.
 7. Re-run simulation after changes whenever the tools are available.
 8. Run `make eval-ota` before treating schematic behavior as stable across
    named corners and load cases.
-9. Use `make agent-ota` for bounded recursive sizing loops when multiple
+9. Use `make eval-current-mirror` as the smoke pattern for adding a simpler
+   one-testbench analog block.
+10. Use `make agent-ota` for bounded recursive sizing loops when multiple
    evaluation cases miss or trade off against each other.
-10. Use `make search-ota` for configured schematic candidate axes, and
+11. Use `make search-ota` for configured schematic candidate axes, and
     `make search-ota-postlayout-quick` when schematic winners may trade off
     against layout parasitics.
-11. After schematic closure, run physical targets in order:
+12. After schematic closure, run physical targets in order:
     `make layout-ota`, `make drc-ota`, `make lvs-ota`, `make pex-ota`, and
     `make postlayout-ota`.
-12. Prefer `make signoff-ota` when the goal is complete end-to-end evidence
+13. Prefer `make signoff-ota` when the goal is complete end-to-end evidence
     rather than debugging one physical stage.
 
 ## Verification Rules
@@ -43,6 +45,8 @@ as simulation, DRC, LVS, or PEX evidence.
 - `make eval-ota` is an exploratory evaluation target: it should complete if
   all simulations run, even when cases miss spec. Use `make eval-ota-strict`
   when a hard pass/fail gate is required.
+- `make eval-current-mirror` is a strict one-testbench block-template check.
+  Treat it as the reference pattern for simple new analog cells.
 - `make agent-ota` ranks candidate sizing changes but does not change the source
   spec. `make agent-ota-apply` may update the spec only when the best candidate
   passes every named evaluation case.

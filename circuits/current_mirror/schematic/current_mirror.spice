@@ -1,0 +1,8 @@
+* SKY130 NMOS current mirror source cell.
+.subckt current_mirror ref out vss
++ params: MN_REF_W=10 MN_REF_L=0.5 MN_REF_M=1
++ params: MN_OUT_W=10 MN_OUT_L=0.5 MN_OUT_M=1
+
+XMN_REF ref ref vss vss sky130_fd_pr__nfet_01v8 w=MN_REF_W l=MN_REF_L nf=MN_REF_M
+XMN_OUT out ref vss vss sky130_fd_pr__nfet_01v8 w=MN_OUT_W l=MN_OUT_L nf=MN_OUT_M
+.ends current_mirror

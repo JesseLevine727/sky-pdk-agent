@@ -104,6 +104,11 @@ def flatten_for_template(spec: dict[str, Any]) -> dict[str, str]:
         if key in spec:
             params[key] = spec[key]
 
+    for key, value in spec.items():
+        if key.startswith("_") or key in params or isinstance(value, (dict, list)):
+            continue
+        params[key] = value
+
     simulation = spec.get("simulation", {})
     if isinstance(simulation, dict):
         for key, value in simulation.items():

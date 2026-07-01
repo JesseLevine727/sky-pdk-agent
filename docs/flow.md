@@ -7,23 +7,25 @@ The repo flow is intentionally file-based.
 3. `scripts/run_ngspice.py` renders an effective netlist into a run directory.
 4. ngspice runs in batch mode and writes a log.
 5. `scripts/parse_measures.py` extracts `.measure` values to JSON.
-6. `scripts/evaluate_ota.py` runs named cases from the spec, writes
+6. `scripts/evaluate_single.py` runs one-testbench blocks and writes a durable
+   target-scored report.
+7. `scripts/evaluate_ota.py` runs named cases from the spec, writes
    `evaluation.json`, creates an SVG metric plot, and updates
    `circuits/ota/reports/latest_eval.md`.
-7. `scripts/agent_loop.py` runs the recursive agent loop: baseline evaluation,
+8. `scripts/agent_loop.py` runs the recursive agent loop: baseline evaluation,
    miss mining, bounded candidate generation, candidate evaluation, ranking,
    optional safe apply, and report writing.
-8. `scripts/propose_sizing.py` compares measurements to spec bounds and writes
+9. `scripts/propose_sizing.py` compares measurements to spec bounds and writes
    a proposed override set.
-9. `scripts/sweep_ota.py` evaluates candidates by calling the same runner and
+10. `scripts/sweep_ota.py` evaluates candidates by calling the same runner and
    writes `ranked_results.json` plus `summary.md` in the sweep run directory.
-10. `scripts/search_candidates.py` evaluates spec-configured candidate axes and
+11. `scripts/search_candidates.py` evaluates spec-configured candidate axes and
     can promote top schematic candidates into isolated physical signoff runs.
-11. `scripts/generate_ota_magic_layout.py` creates a deterministic Magic layout
+12. `scripts/generate_ota_magic_layout.py` creates a deterministic Magic layout
     seed from the same OTA spec.
-12. Magic DRC, Netgen LVS, Magic PEX, and post-layout ngspice evaluation run as
+13. Magic DRC, Netgen LVS, Magic PEX, and post-layout ngspice evaluation run as
     deterministic gates after schematic simulation meets spec.
-13. `scripts/signoff_block.py` runs the reusable end-to-end signoff stage plan
+14. `scripts/signoff_block.py` runs the reusable end-to-end signoff stage plan
     from block spec metadata and writes a durable summary.
 
 This separation is the contract for agent work: Codex may propose and edit
@@ -52,11 +54,11 @@ the evidence.
 ## Current Stack Status
 
 - Working: tool checks, primitive sim, OTA nominal sim, multi-case OTA eval,
-  recursive candidate ranking, sizing proposal reports, deterministic sweep
-  reports, schematic SPICE source generation, deterministic Magic layout seed,
-  spec-driven schematic search, isolated post-layout candidate search, Magic
-  DRC, Netgen LVS, Magic PEX, post-layout evaluation, and reusable block
-  signoff orchestration.
+  current mirror template eval, recursive candidate ranking, sizing proposal
+  reports, deterministic sweep reports, schematic SPICE source generation,
+  deterministic Magic layout seed, spec-driven schematic search, isolated
+  post-layout candidate search, Magic DRC, Netgen LVS, Magic PEX, post-layout
+  evaluation, and reusable block signoff orchestration.
 - Current schematic OTA result: `make eval-ota-strict` passes all 4 named cases.
 - Current physical OTA result: `make drc-ota` reports 0 Magic DRC errors and
   `make lvs-ota` reports `Netlists match uniquely`.
@@ -66,6 +68,8 @@ the evidence.
   schematic/layout tradeoff directly: `mp_load.w_um=24` passes schematic but
   fails post-layout, while `mp_load.w_um=26` passes both and ranks first after
   physical evidence.
+- Current second-template result: `make eval-current-mirror` passes the NMOS
+  current mirror one-testbench spec.
 
 ## Periodic Push Rule
 

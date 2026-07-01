@@ -1,0 +1,28 @@
+* SKY130 NMOS current mirror operating-point characterization
+* Generated from ${spec_path}
+
+.lib "${model_lib}" ${corner}
+.include "${schematic_cell_netlist}"
+.temp ${temperature_c}
+
+.param VDD=${supply_v}
+.param IREF=${reference_current_a}
+.param VOUT=${output_voltage_v}
+.param MN_REF_W=${mn_ref_w_um}
+.param MN_REF_L=${mn_ref_l_um}
+.param MN_REF_M=${mn_ref_m}
+.param MN_OUT_W=${mn_out_w_um}
+.param MN_OUT_L=${mn_out_l_um}
+.param MN_OUT_M=${mn_out_m}
+
+VDD vdd 0 DC {VDD}
+VOUT out 0 DC {VOUT}
+IREF vdd ref DC {IREF}
+
+XCM ref out 0 current_mirror
++ MN_REF_W=MN_REF_W MN_REF_L=MN_REF_L MN_REF_M=MN_REF_M
++ MN_OUT_W=MN_OUT_W MN_OUT_L=MN_OUT_L MN_OUT_M=MN_OUT_M
+
+.op
+
+.end

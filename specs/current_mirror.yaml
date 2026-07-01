@@ -1,0 +1,37 @@
+design: current_mirror
+pdk: sky130A
+
+schematic:
+  cell_name: current_mirror
+  cell_netlist: circuits/current_mirror/schematic/current_mirror.spice
+
+supply_v: 1.8
+temperature_c: 27
+reference_current_a: 1.0e-5
+output_voltage_v: 1.2
+
+targets:
+  iout_a:
+    min: 9.0e-6
+    max: 1.1e-5
+  mirror_error:
+    max: 0.10
+  vref_v:
+    min: 0.20
+    max: 1.20
+
+simulation:
+  corner: tt
+  model_lib: "$PDK_ROOT/$PDK/libs.tech/ngspice/sky130.lib.spice"
+
+devices:
+  mn_ref:
+    model: sky130_fd_pr__nfet_01v8
+    w_um: 10
+    l_um: 0.5
+    m: 1
+  mn_out:
+    model: sky130_fd_pr__nfet_01v8
+    w_um: 10
+    l_um: 0.5
+    m: 1

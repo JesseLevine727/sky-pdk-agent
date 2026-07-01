@@ -27,6 +27,7 @@ scripts/setup_pdk.sh
 make render-ota
 make sim-ota
 make eval-ota
+make eval-current-mirror
 make agent-ota
 make propose-ota
 make sweep-ota-quick
@@ -47,6 +48,10 @@ valid SKY130 install.
 `circuits/ota/reports/latest_eval.md`. It is exploratory and exits successfully
 when simulations complete, even if a case misses target. `make eval-ota-strict`
 returns nonzero on target misses.
+
+`make eval-current-mirror` runs the NMOS current mirror template through the
+generic single-testbench evaluator and writes
+`circuits/current_mirror/reports/latest_eval.md`.
 
 `make agent-ota` runs a bounded recursive loop: baseline evaluation, miss
 mining, candidate generation, candidate evaluation, ranking, and a durable
@@ -118,12 +123,17 @@ system or package-extracted Magic.
 ## Main Files
 
 - `specs/ota.yaml`: 5T OTA requirements, starting sizing, and simulation setup
+- `specs/current_mirror.yaml`: NMOS current mirror requirements and sizing
 - `specs/primitive_nmos.yaml`: NMOS ID/VGS characterization example
+- `circuits/current_mirror/testbenches/current_mirror_dc.spice.in`: current
+  mirror operating-point testbench
 - `circuits/ota/testbenches/ota_ac.spice.in`: OTA AC/DC testbench template
 - `circuits/ota/testbenches/ota_ac_postlayout.spice.in`: extracted-layout OTA
   AC/DC testbench template
 - `scripts/run_ngspice.py`: render, run, and parse one SPICE job
 - `scripts/evaluate_ota.py`: run named OTA evaluation cases and write a report
+- `scripts/evaluate_single.py`: run one testbench, score targets, and write a
+  report for simpler blocks
 - `scripts/agent_loop.py`: run the recursive Codex-style sizing loop
 - `scripts/search_candidates.py`: run spec-driven schematic and post-layout
   candidate search

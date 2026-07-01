@@ -6,15 +6,17 @@ export PDK_ROOT ?= $(HOME)/.ciel
 export PDK ?= sky130A
 SPEC ?= specs/ota.yaml
 PRIMITIVE_SPEC ?= specs/primitive_nmos.yaml
+CURRENT_MIRROR_SPEC ?= specs/current_mirror.yaml
 OTA_TEMPLATE ?= circuits/ota/testbenches/ota_ac.spice.in
 OTA_POSTLAYOUT_TEMPLATE ?= circuits/ota/testbenches/ota_ac_postlayout.spice.in
 PRIMITIVE_TEMPLATE ?= circuits/primitives/nmos_id_vgs/testbenches/id_vgs.spice.in
+CURRENT_MIRROR_TEMPLATE ?= circuits/current_mirror/testbenches/current_mirror_dc.spice.in
 OTA_LAYOUT_DIR ?= circuits/ota/layout/magic
 OTA_LAYOUT ?= $(OTA_LAYOUT_DIR)/ota_5t.mag
 OTA_EXTRACTED ?= circuits/ota/layout/extracted/ota_5t_extracted.spice
 OTA_LVS_EXTRACTED ?= circuits/ota/layout/extracted/ota_5t_lvs.spice
 
-.PHONY: check tools netlist-ota render-ota sim-ota eval-ota eval-ota-strict agent-ota agent-ota-apply agent-ota-smoke render-primitive sim-primitive propose-ota sweep-ota sweep-ota-quick search-ota search-ota-postlayout-quick layout-ota drc-ota extract-ota-lvs pex-ota lvs-ota postlayout-ota signoff-ota skill-validate
+.PHONY: check tools netlist-ota render-ota sim-ota eval-ota eval-ota-strict agent-ota agent-ota-apply agent-ota-smoke render-primitive sim-primitive render-current-mirror sim-current-mirror eval-current-mirror propose-ota sweep-ota sweep-ota-quick search-ota search-ota-postlayout-quick layout-ota drc-ota extract-ota-lvs pex-ota lvs-ota postlayout-ota signoff-ota skill-validate
 
 check: tools skill-validate
 	$(PYTHON) -m unittest discover -s tests
@@ -73,6 +75,15 @@ render-primitive:
 
 sim-primitive:
 	$(PYTHON) scripts/run_ngspice.py --spec $(PRIMITIVE_SPEC) --template $(PRIMITIVE_TEMPLATE) --out-dir circuits/primitives/nmos_id_vgs/sim/runs/latest
+
+render-current-mirror:
+	$(PYTHON) scripts/run_ngspice.py --spec $(CURRENT_MIRROR_SPEC) --template $(CURRENT_MIRROR_TEMPLATE) --out-dir circuits/current_mirror/sim/runs/render --dry-run
+
+sim-current-mirror:
+	$(PYTHON) scripts/run_ngspice.py --spec $(CURRENT_MIRROR_SPEC) --template $(CURRENT_MIRROR_TEMPLATE) --out-dir circuits/current_mirror/sim/runs/latest
+
+eval-current-mirror:
+	$(PYTHON) scripts/evaluate_single.py --spec $(CURRENT_MIRROR_SPEC) --template $(CURRENT_MIRROR_TEMPLATE) --out-dir circuits/current_mirror/sim/runs/eval --report circuits/current_mirror/reports/latest_eval.md --strict
 
 propose-ota:
 	$(PYTHON) scripts/propose_sizing.py --spec $(SPEC) --measures circuits/ota/sim/runs/latest/measures.json --out circuits/ota/reports/sizing_proposal.json
