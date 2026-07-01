@@ -20,9 +20,14 @@ as simulation, DRC, LVS, or PEX evidence.
    named corners and load cases.
 9. Use `make agent-ota` for bounded recursive sizing loops when multiple
    evaluation cases miss or trade off against each other.
-10. After schematic closure, run physical targets in order:
+10. Use `make search-ota` for configured schematic candidate axes, and
+    `make search-ota-postlayout-quick` when schematic winners may trade off
+    against layout parasitics.
+11. After schematic closure, run physical targets in order:
     `make layout-ota`, `make drc-ota`, `make lvs-ota`, `make pex-ota`, and
     `make postlayout-ota`.
+12. Prefer `make signoff-ota` when the goal is complete end-to-end evidence
+    rather than debugging one physical stage.
 
 ## Verification Rules
 
@@ -47,6 +52,11 @@ as simulation, DRC, LVS, or PEX evidence.
 - `make postlayout-ota` is a deterministic extracted-netlist evaluation gate.
   Treat any target miss as a real post-layout design miss, even when schematic
   evaluation passes.
+- `make signoff-ota` must pass every configured stage before an end-to-end
+  physical closure claim.
+- `make search-ota-postlayout-quick` may show schematic candidates that fail
+  post-layout. Treat those as useful evidence of layout/schematic tradeoff, not
+  as passing design candidates.
 
 ## Git Rules
 

@@ -14,7 +14,7 @@ OTA_LAYOUT ?= $(OTA_LAYOUT_DIR)/ota_5t.mag
 OTA_EXTRACTED ?= circuits/ota/layout/extracted/ota_5t_extracted.spice
 OTA_LVS_EXTRACTED ?= circuits/ota/layout/extracted/ota_5t_lvs.spice
 
-.PHONY: check tools netlist-ota render-ota sim-ota eval-ota eval-ota-strict agent-ota agent-ota-apply agent-ota-smoke render-primitive sim-primitive propose-ota sweep-ota layout-ota drc-ota extract-ota-lvs pex-ota lvs-ota postlayout-ota signoff-ota skill-validate
+.PHONY: check tools netlist-ota render-ota sim-ota eval-ota eval-ota-strict agent-ota agent-ota-apply agent-ota-smoke render-primitive sim-primitive propose-ota sweep-ota sweep-ota-quick search-ota search-ota-postlayout-quick layout-ota drc-ota extract-ota-lvs pex-ota lvs-ota postlayout-ota signoff-ota skill-validate
 
 check: tools skill-validate
 	$(PYTHON) -m unittest discover -s tests
@@ -82,6 +82,12 @@ sweep-ota:
 
 sweep-ota-quick:
 	$(PYTHON) scripts/sweep_ota.py --spec $(SPEC) --template $(OTA_TEMPLATE) --out-dir circuits/ota/sim/runs/sweep_quick --max-candidates 12
+
+search-ota:
+	$(PYTHON) scripts/search_candidates.py --spec $(SPEC) --profile quick --out-dir circuits/ota/sim/runs/search --report circuits/ota/reports/search_summary.md
+
+search-ota-postlayout-quick:
+	$(PYTHON) scripts/search_candidates.py --spec $(SPEC) --profile quick --out-dir circuits/ota/sim/runs/search_postlayout_quick --report circuits/ota/reports/search_postlayout_summary.md --max-candidates 4 --postlayout-top 2
 
 skill-validate:
 	$(PYTHON) scripts/validate_skill.py .agents/skills/analog-design

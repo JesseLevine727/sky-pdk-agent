@@ -1,7 +1,7 @@
 # Agentic Analog Loop
 
-This repo now has a deterministic Codex-in-the-loop analog workflow for the 5T
-OTA. The loop is file-based: Codex edits specs and scripts, EDA tools generate
+This repo has a deterministic Codex-in-the-loop analog workflow for the 5T OTA.
+The loop is file-based: Codex edits specs and scripts, EDA tools generate
 evidence, and reports summarize decisions.
 
 ## Implemented Loop
@@ -19,6 +19,9 @@ make check
 make eval-ota
 make agent-ota
 make agent-ota-apply
+make search-ota
+make search-ota-postlayout-quick
+make signoff-ota
 ```
 
 `make agent-ota` never edits the source spec. It writes:
@@ -30,28 +33,25 @@ make agent-ota-apply
 `make agent-ota-apply` only writes back to `specs/ota.yaml` when the best
 candidate passes every named evaluation case.
 
-## Current OTA Finding
+## Current OTA State
 
-The current nominal OTA passes. The multi-case eval still has coupled tradeoffs:
-slow-corner gain and heavy-load bandwidth push sizing in opposite directions.
+The current OTA passes schematic and extracted-layout evaluation. The physical
+closure point is:
 
-The recursive loop improved the design search from 2/4 passing cases to 3/4.
-Best candidate:
+- `devices.mn_in.w_um=15.12`
+- `devices.mp_load.w_um=26`
+- `bias_tail_v=0.7`
 
-```text
-bias_tail_v=0.7
-devices.mn_in.l_um=1.05
-devices.mn_in.w_um=15.12
-devices.mp_load.l_um=1.05
-```
-
-That candidate still misses slow-corner gain slightly, so it was not applied.
+`make search-ota` shows that `devices.mp_load.w_um=24` ranks slightly better
+schematically. `make search-ota-postlayout-quick` then takes the top schematic
+candidates through isolated layout/PEX/post-layout signoff and re-ranks
+`devices.mp_load.w_um=26` first because it passes post-layout while the `24um`
+PMOS load candidate fails extracted slow-corner gain.
 
 ## Next Stack Stages
 
 1. Broaden sizing intelligence with a gm/ID or primitive characterization table.
-2. Add an Xschem schematic source and verify netlist equivalence to the current
-   SPICE template.
-3. Add a Magic layout template for the 5T OTA.
-4. Run DRC, LVS, PEX, and post-layout `make eval-ota`.
-5. Promote post-layout eval and signoff reports to the same recursive loop.
+2. Add additional block templates that use the same spec/eval/report contract.
+3. Generalize layout generation beyond OTA-specific placement/routing.
+4. Add topology-level candidates, not only sizing-axis candidates.
+5. Feed post-layout search outcomes back into proposal generation.

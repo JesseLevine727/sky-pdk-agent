@@ -23,12 +23,14 @@ For background on the repo contract, read `references/sky130-flow.md` when worki
 8. If multiple evaluation cases trade off, run `make agent-ota` and inspect `circuits/ota/reports/agent_loop.md`.
 9. If a passing recursive candidate exists, apply it with `make agent-ota-apply`; otherwise broaden the candidate axes or escalate topology.
 10. If tradeoffs need a broader one-metric sweep, run `scripts/sweep_ota.py` and inspect `ranked_results.json`.
-11. Apply the least aggressive passing candidate to the source spec, then rerun the canonical Make target and `make eval-ota`.
-12. Record durable design evidence in `circuits/<block>/reports/design_notes.md`.
-13. Commit and push after each coherent verified milestone in long-running agent work.
-14. Move to Xschem, layout, DRC, LVS, and PEX only after schematic simulation has evidence.
-15. For OTA physical work, run `make layout-ota`, `make drc-ota`, `make lvs-ota`, `make pex-ota`, and `make postlayout-ota` in order.
-16. Treat DRC/LVS failures as flow or layout blockers and post-layout target misses as design misses unless the simulator run itself failed.
+11. If schematic winners may trade off against parasitics, run `make search-ota-postlayout-quick` and inspect `circuits/ota/reports/search_postlayout_summary.md`.
+12. Apply the least aggressive passing candidate to the source spec, then rerun the canonical Make target and `make eval-ota`.
+13. Record durable design evidence in `circuits/<block>/reports/design_notes.md`.
+14. Commit and push after each coherent verified milestone in long-running agent work.
+15. Move to Xschem, layout, DRC, LVS, and PEX only after schematic simulation has evidence.
+16. For OTA physical work, run `make layout-ota`, `make drc-ota`, `make lvs-ota`, `make pex-ota`, and `make postlayout-ota` in order.
+17. Prefer `make signoff-ota` for complete OTA closure evidence.
+18. Treat DRC/LVS failures as flow or layout blockers and post-layout target misses as design misses unless the simulator run itself failed.
 
 ## Commands
 
@@ -86,6 +88,18 @@ Run a quick bounded sweep:
 make sweep-ota-quick
 ```
 
+Run configured schematic candidate search:
+
+```bash
+make search-ota
+```
+
+Run configured search with isolated post-layout signoff for top candidates:
+
+```bash
+make search-ota-postlayout-quick
+```
+
 Generate deterministic OTA Magic layout:
 
 ```bash
@@ -116,6 +130,12 @@ Evaluate the extracted post-layout netlist:
 make postlayout-ota
 ```
 
+Run complete OTA signoff from the spec flow metadata:
+
+```bash
+make signoff-ota
+```
+
 Validate repo scripts and this skill:
 
 ```bash
@@ -129,6 +149,8 @@ make check
 - For sweeps, report the top ranked candidate, whether it passed, and the chosen overrides.
 - For evaluations, report the pass/fail count, failing cases, and `circuits/ota/reports/latest_eval.md`.
 - For recursive agent loops, report the baseline score, best candidate, whether it was applied, and `circuits/ota/reports/agent_loop.md`.
+- For candidate search, report whether ranking used schematic-only or post-layout evidence and cite `circuits/ota/reports/search_summary.md` or `circuits/ota/reports/search_postlayout_summary.md`.
+- For signoff orchestration, report each stage result and `circuits/ota/reports/signoff_summary.md`.
 - For DRC, report the exact DRC error count and `circuits/ota/reports/drc/drc.md`.
 - For LVS, report whether Netgen printed `Netlists match uniquely` and cite `circuits/ota/reports/lvs_ota.md`.
 - For PEX, report the extracted netlist path under `circuits/ota/layout/extracted/`.

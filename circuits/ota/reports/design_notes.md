@@ -256,3 +256,37 @@ Physical gates:
 
 All named schematic and extracted-layout evaluation cases now pass the current
 targets.
+
+## 2026-07-01 Search and Signoff Generalization
+
+Added a reusable signoff orchestrator and spec-driven candidate search:
+
+- `scripts/signoff_block.py` runs the OTA stage plan from `specs/ota.yaml`
+  flow metadata and writes `circuits/ota/reports/signoff_summary.md`.
+- `scripts/search_candidates.py` reads `search.profiles` from the spec, ranks
+  schematic candidates, and can send top candidates through isolated
+  layout/DRC/LVS/PEX/post-layout signoff directories.
+
+Verification commands:
+
+```bash
+source env.sh
+make check
+make signoff-ota
+make search-ota
+make search-ota-postlayout-quick
+```
+
+Result:
+
+- `make signoff-ota` passed all 8 stages.
+- `make search-ota` ranked `devices.mp_load.w_um=24` first using schematic
+  evidence only.
+- `make search-ota-postlayout-quick` re-ranked candidates with physical
+  evidence: `devices.mp_load.w_um=24` passed schematic but failed post-layout,
+  while `devices.mp_load.w_um=26` passed schematic and post-layout and ranked
+  first.
+
+This is the intended agentic analog pattern: schematic search is used as a fast
+screen, but source candidates are not treated as closed until layout extraction
+and post-layout evaluation agree.

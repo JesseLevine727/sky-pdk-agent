@@ -17,10 +17,14 @@ The repo flow is intentionally file-based.
    a proposed override set.
 9. `scripts/sweep_ota.py` evaluates candidates by calling the same runner and
    writes `ranked_results.json` plus `summary.md` in the sweep run directory.
-10. `scripts/generate_ota_magic_layout.py` creates a deterministic Magic layout
+10. `scripts/search_candidates.py` evaluates spec-configured candidate axes and
+    can promote top schematic candidates into isolated physical signoff runs.
+11. `scripts/generate_ota_magic_layout.py` creates a deterministic Magic layout
     seed from the same OTA spec.
-11. Magic DRC, Netgen LVS, Magic PEX, and post-layout ngspice evaluation run as
+12. Magic DRC, Netgen LVS, Magic PEX, and post-layout ngspice evaluation run as
     deterministic gates after schematic simulation meets spec.
+13. `scripts/signoff_block.py` runs the reusable end-to-end signoff stage plan
+    from block spec metadata and writes a durable summary.
 
 This separation is the contract for agent work: Codex may propose and edit
 files, but EDA tools produce verification evidence.
@@ -50,12 +54,18 @@ the evidence.
 - Working: tool checks, primitive sim, OTA nominal sim, multi-case OTA eval,
   recursive candidate ranking, sizing proposal reports, deterministic sweep
   reports, schematic SPICE source generation, deterministic Magic layout seed,
-  Magic DRC, Netgen LVS, Magic PEX, and post-layout evaluation.
+  spec-driven schematic search, isolated post-layout candidate search, Magic
+  DRC, Netgen LVS, Magic PEX, post-layout evaluation, and reusable block
+  signoff orchestration.
 - Current schematic OTA result: `make eval-ota-strict` passes all 4 named cases.
 - Current physical OTA result: `make drc-ota` reports 0 Magic DRC errors and
   `make lvs-ota` reports `Netlists match uniquely`.
 - Current post-layout result: `make postlayout-ota` completes and passes all 4
   named extracted-layout cases.
+- Current search result: `make search-ota-postlayout-quick` demonstrates the
+  schematic/layout tradeoff directly: `mp_load.w_um=24` passes schematic but
+  fails post-layout, while `mp_load.w_um=26` passes both and ranks first after
+  physical evidence.
 
 ## Periodic Push Rule
 

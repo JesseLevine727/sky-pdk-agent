@@ -30,11 +30,14 @@ make eval-ota
 make agent-ota
 make propose-ota
 make sweep-ota-quick
+make search-ota
+make search-ota-postlayout-quick
 make layout-ota
 make drc-ota
 make lvs-ota
 make pex-ota
 make postlayout-ota
+make signoff-ota
 ```
 
 `make render-ota` works without ngspice. `make sim-ota` requires ngspice and a
@@ -50,11 +53,18 @@ mining, candidate generation, candidate evaluation, ranking, and a durable
 report at `circuits/ota/reports/agent_loop.md`. `make agent-ota-apply` only
 updates the source spec when the best candidate passes every named case.
 
+`make search-ota` runs the spec-driven candidate axes under `search.profiles`
+and ranks schematic candidates. `make search-ota-postlayout-quick` takes the
+top schematic candidates through isolated layout, DRC, LVS, PEX, and
+post-layout evaluation, then re-ranks using physical evidence.
+
 `make layout-ota` generates a deterministic Magic PCell route seed from
 `specs/ota.yaml`. `make drc-ota` writes `circuits/ota/reports/drc/drc.md`.
 `make lvs-ota` compares Magic extraction against
 `circuits/ota/schematic/ota_5t.spice` with Netgen. `make pex-ota` writes the
 cap-inclusive extracted SPICE used by `make postlayout-ota`.
+`make signoff-ota` runs the whole OTA signoff plan through
+`scripts/signoff_block.py` and writes `circuits/ota/reports/signoff_summary.md`.
 
 Expected EDA tools:
 
@@ -115,6 +125,10 @@ system or package-extracted Magic.
 - `scripts/run_ngspice.py`: render, run, and parse one SPICE job
 - `scripts/evaluate_ota.py`: run named OTA evaluation cases and write a report
 - `scripts/agent_loop.py`: run the recursive Codex-style sizing loop
+- `scripts/search_candidates.py`: run spec-driven schematic and post-layout
+  candidate search
+- `scripts/signoff_block.py`: run reusable schematic/layout/DRC/LVS/PEX
+  signoff stages from a block spec
 - `scripts/propose_sizing.py`: generate sizing changes from measured misses
 - `scripts/sweep_ota.py`: run and rank candidate sweeps using the simulation runner
 - `scripts/generate_ota_magic_layout.py`: generate the deterministic Magic
