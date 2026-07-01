@@ -20,6 +20,14 @@ for recursive block-level and chain-level improvement.
 | `comparator` | `static_cmos_comparator` | Convert the amplified analog node into a rail-level decision. |
 | `opamp_comparator_chain` | `hierarchical_mixed_signal_testbench` | Verify opamp/comparator interface behavior and full-chain timing. |
 
+## Template Coverage
+
+| Block | Kind | Matched | Schematic | Layout | LVS/PEX | Post-layout |
+| --- | --- | :---: | :---: | :---: | :---: | :---: |
+| `opamp` | `ota_5t` | yes | yes | yes | yes | yes |
+| `comparator` | `static_cmos_comparator` | yes | yes | no | no | no |
+| `opamp_comparator_chain` | `hierarchical_mixed_signal_testbench` | yes | yes | no | no | no |
+
 ## Interfaces
 
 - `opamp.out` -> `comparator.vin`: The OTA output must cross the comparator threshold with enough margin.

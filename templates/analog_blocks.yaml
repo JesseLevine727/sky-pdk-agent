@@ -1,0 +1,81 @@
+schema: sky-pdk-agent.analog_template_catalog.v1
+
+templates:
+  ota_5t:
+    name: 5T OTA
+    description: Differential NMOS input pair with PMOS current-mirror load.
+    supports:
+      schematic_eval: true
+      recursive_sizing: true
+      layout: true
+      drc: true
+      lvs: true
+      pex: true
+      postlayout_eval: true
+    specs:
+      - specs/ota.yaml
+    commands:
+      evaluate: make eval-ota-strict
+      layout: make layout-ota
+      signoff: make signoff-ota
+    files:
+      schematic: circuits/ota/schematic/ota_5t.spice
+      layout_manifest: circuits/ota/layout/magic/ota_5t_layout_manifest.json
+      report: circuits/ota/reports/signoff_summary.md
+
+  static_cmos_comparator:
+    name: Static CMOS comparator
+    description: CMOS inverter used as a threshold detector/comparator.
+    supports:
+      schematic_eval: true
+      recursive_sizing: false
+      layout: false
+      drc: false
+      lvs: false
+      pex: false
+      postlayout_eval: false
+    specs:
+      - specs/comparator.yaml
+    commands:
+      evaluate: make eval-comparator
+    files:
+      schematic: circuits/comparator/schematic/static_comparator.spice
+      report: circuits/comparator/reports/latest_eval.md
+
+  current_mirror:
+    name: NMOS current mirror
+    description: Two-transistor operating-point current mirror template.
+    supports:
+      schematic_eval: true
+      recursive_sizing: false
+      layout: false
+      drc: false
+      lvs: false
+      pex: false
+      postlayout_eval: false
+    specs:
+      - specs/current_mirror.yaml
+    commands:
+      evaluate: make eval-current-mirror
+    files:
+      schematic: circuits/current_mirror/schematic/current_mirror.spice
+      report: circuits/current_mirror/reports/latest_eval.md
+
+  hierarchical_mixed_signal_testbench:
+    name: OTA-to-comparator chain
+    description: Hierarchical transient testbench connecting the OTA output to the static comparator input.
+    supports:
+      schematic_eval: true
+      recursive_sizing: false
+      layout: false
+      drc: false
+      lvs: false
+      pex: false
+      postlayout_eval: false
+    specs:
+      - specs/opamp_comparator_chain.yaml
+    commands:
+      plan: make plan-opamp-comparator-chain
+      evaluate: make eval-opamp-comparator-chain
+    files:
+      report: circuits/opamp_comparator_chain/reports/latest_eval.md

@@ -8,6 +8,7 @@ SPEC ?= specs/ota.yaml
 PRIMITIVE_SPEC ?= specs/primitive_nmos.yaml
 CURRENT_MIRROR_SPEC ?= specs/current_mirror.yaml
 OPAMP_COMPARATOR_INTENT ?= intents/opamp_comparator_chain.yaml
+ANALOG_TEMPLATE_CATALOG ?= templates/analog_blocks.yaml
 OPAMP_COMPARATOR_CHAIN_SPEC ?= specs/opamp_comparator_chain.yaml
 COMPARATOR_SPEC ?= specs/comparator.yaml
 OTA_TEMPLATE ?= circuits/ota/testbenches/ota_ac.spice.in
@@ -91,7 +92,7 @@ eval-current-mirror:
 	$(PYTHON) scripts/evaluate_single.py --spec $(CURRENT_MIRROR_SPEC) --template $(CURRENT_MIRROR_TEMPLATE) --out-dir circuits/current_mirror/sim/runs/eval --report circuits/current_mirror/reports/latest_eval.md --strict
 
 plan-opamp-comparator-chain:
-	$(PYTHON) scripts/design_intake.py --intent $(OPAMP_COMPARATOR_INTENT) --report circuits/opamp_comparator_chain/reports/design_plan.md --scaffold
+	$(PYTHON) scripts/design_intake.py --intent $(OPAMP_COMPARATOR_INTENT) --catalog $(ANALOG_TEMPLATE_CATALOG) --report circuits/opamp_comparator_chain/reports/design_plan.md --scaffold
 
 render-comparator:
 	$(PYTHON) scripts/run_ngspice.py --spec $(COMPARATOR_SPEC) --template $(COMPARATOR_TEMPLATE) --out-dir circuits/comparator/sim/runs/render --dry-run

@@ -29,6 +29,20 @@ def load_intent(path: str | Path) -> dict[str, Any]:
     return data
 
 
+def load_catalog(path: str | Path | None) -> dict[str, Any]:
+    if path is None:
+        return {}
+    catalog_path = Path(path)
+    data = yaml.safe_load(catalog_path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError(f"{catalog_path} must contain a mapping")
+    templates = data.get("templates", {})
+    if not isinstance(templates, dict):
+        raise ValueError(f"{catalog_path} templates must be a mapping")
+    data["_meta"] = {"catalog_path": str(catalog_path)}
+    return data
+
+
 def _as_list(value: Any, field: str) -> list[Any]:
     if value is None:
         return []
@@ -47,7 +61,40 @@ def _path_entries(files: dict[str, Any]) -> list[str]:
     return paths
 
 
-def build_plan(intent: dict[str, Any]) -> dict[str, Any]:
+def _template_summary(block: dict[str, Any], templates: dict[str, Any]) -> dict[str, Any]:
+    kind = str(block.get("kind", ""))
+    template = templates.get(kind)
+    if not isinstance(template, dict):
+        return {
+            "block": block.get("name"),
+            "kind": kind,
+            "matched": False,
+            "supports": {},
+            "commands": {},
+            "files": {},
+            "notes": ["No supported template matched this block kind."],
+        }
+    return {
+        "block": block.get("name"),
+        "kind": kind,
+        "matched": True,
+        "template_name": template.get("name", kind),
+        "description": template.get("description", ""),
+        "supports": template.get("supports", {}),
+        "commands": template.get("commands", {}),
+        "files": template.get("files", {}),
+        "specs": template.get("specs", []),
+    }
+
+
+def _template_matches(blocks: list[Any], catalog: dict[str, Any]) -> list[dict[str, Any]]:
+    templates = catalog.get("templates", {})
+    if not isinstance(templates, dict):
+        templates = {}
+    return [_template_summary(block, templates) for block in blocks if isinstance(block, dict)]
+
+
+def build_plan(intent: dict[str, Any], catalog: dict[str, Any] | None = None) -> dict[str, Any]:
     files = intent.get("files", {})
     if not isinstance(files, dict):
         raise ValueError("files must be a mapping")
@@ -65,13 +112,17 @@ def build_plan(intent: dict[str, Any]) -> dict[str, Any]:
     commands = _as_list(acceptance.get("commands"), "acceptance.commands")
     checks = _as_list(acceptance.get("checks"), "acceptance.checks")
 
+    catalog = catalog or {}
+    template_matches = _template_matches(blocks, catalog)
     return {
         "schema": "sky-pdk-agent.design_plan.v1",
         "design": intent["design"],
         "intent_path": intent.get("_meta", {}).get("intent_path", "unknown"),
+        "catalog_path": catalog.get("_meta", {}).get("catalog_path"),
         "intent": intent["intent"],
         "topology": intent["topology"],
         "blocks": blocks,
+        "template_matches": template_matches,
         "interfaces": _as_list(intent.get("interfaces"), "interfaces"),
         "requirements": intent.get("requirements", {}),
         "files": files,
@@ -106,6 +157,27 @@ def write_markdown_report(plan: dict[str, Any], path: str | Path) -> Path:
         lines.append(
             f"| `{block['name']}` | `{block['kind']}` | {block.get('role', '')} |"
         )
+    if plan.get("template_matches"):
+        lines.extend(["", "## Template Coverage", ""])
+        lines.append("| Block | Kind | Matched | Schematic | Layout | LVS/PEX | Post-layout |")
+        lines.append("| --- | --- | :---: | :---: | :---: | :---: | :---: |")
+        for match in plan["template_matches"]:
+            supports = match.get("supports", {})
+            lvs_pex = bool(supports.get("lvs")) and bool(supports.get("pex"))
+            lines.append(
+                "| `{block}` | `{kind}` | {matched} | {schematic} | {layout} | {lvs_pex} | {postlayout} |".format(
+                    block=match.get("block", ""),
+                    kind=match.get("kind", ""),
+                    matched="yes" if match.get("matched") else "no",
+                    schematic="yes" if supports.get("schematic_eval") else "no",
+                    layout="yes" if supports.get("layout") else "no",
+                    lvs_pex="yes" if lvs_pex else "no",
+                    postlayout="yes" if supports.get("postlayout_eval") else "no",
+                )
+            )
+        unmatched = [match for match in plan["template_matches"] if not match.get("matched")]
+        if unmatched:
+            lines.extend(["", "Unsupported block kinds require a new template before end-to-end claims."])
     if plan["interfaces"]:
         lines.extend(["", "## Interfaces", ""])
         for interface in plan["interfaces"]:
@@ -152,12 +224,14 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--intent", required=True, help="Design intent YAML file")
     parser.add_argument("--report", required=True, help="Markdown plan output")
+    parser.add_argument("--catalog", help="Supported analog block template catalog")
     parser.add_argument("--json", help="Optional JSON plan output")
     parser.add_argument("--scaffold", action="store_true", help="Create planned directories")
     args = parser.parse_args()
 
     intent = load_intent(args.intent)
-    plan = build_plan(intent)
+    catalog = load_catalog(args.catalog)
+    plan = build_plan(intent, catalog)
     report_path = write_markdown_report(plan, args.report)
     print(f"Wrote {report_path}")
     if args.json:
