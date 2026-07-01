@@ -32,6 +32,7 @@ For background on the repo contract, read `references/sky130-flow.md` when worki
 17. For OTA physical work, run `make layout-ota`, `make drc-ota`, `make lvs-ota`, `make pex-ota`, and `make postlayout-ota` in order.
 18. Prefer `make signoff-ota` for complete OTA closure evidence.
 19. Treat DRC/LVS failures as flow or layout blockers and post-layout target misses as design misses unless the simulator run itself failed.
+20. Use layout manifests as structured generator intent; keep DRC, LVS, PEX, and post-layout simulation as the closure evidence.
 
 ## Commands
 
@@ -159,6 +160,7 @@ make check
 - For recursive agent loops, report the baseline score, best candidate, whether it was applied, and `circuits/ota/reports/agent_loop.md`.
 - For candidate search, report whether ranking used schematic-only or post-layout evidence and cite `circuits/ota/reports/search_summary.md` or `circuits/ota/reports/search_postlayout_summary.md`.
 - For signoff orchestration, report each stage result and `circuits/ota/reports/signoff_summary.md`.
+- For layout generation, report the manifest path when present, such as `circuits/ota/layout/magic/ota_5t_layout_manifest.json`.
 - For DRC, report the exact DRC error count and `circuits/ota/reports/drc/drc.md`.
 - For LVS, report whether Netgen printed `Netlists match uniquely` and cite `circuits/ota/reports/lvs_ota.md`.
 - For PEX, report the extracted netlist path under `circuits/ota/layout/extracted/`.

@@ -64,8 +64,11 @@ top schematic candidates through isolated layout, DRC, LVS, PEX, and
 post-layout evaluation, then re-ranks using physical evidence.
 
 `make layout-ota` generates a deterministic Magic PCell route seed from
-`specs/ota.yaml`. `make drc-ota` writes `circuits/ota/reports/drc/drc.md`.
-`make lvs-ota` compares Magic extraction against
+`specs/ota.yaml` and writes
+`circuits/ota/layout/magic/ota_5t_layout_manifest.json` with pin, device,
+route-net, and generated-file intent. `make drc-ota` writes
+`circuits/ota/reports/drc/drc.md`. `make lvs-ota` compares Magic extraction
+against
 `circuits/ota/schematic/ota_5t.spice` with Netgen. `make pex-ota` writes the
 cap-inclusive extracted SPICE used by `make postlayout-ota`.
 `make signoff-ota` runs the whole OTA signoff plan through
@@ -130,6 +133,8 @@ system or package-extracted Magic.
 - `circuits/ota/testbenches/ota_ac.spice.in`: OTA AC/DC testbench template
 - `circuits/ota/testbenches/ota_ac_postlayout.spice.in`: extracted-layout OTA
   AC/DC testbench template
+- `circuits/ota/layout/magic/ota_5t_layout_manifest.json`: deterministic OTA
+  layout intent generated beside the Magic Tcl seed
 - `scripts/run_ngspice.py`: render, run, and parse one SPICE job
 - `scripts/evaluate_ota.py`: run named OTA evaluation cases and write a report
 - `scripts/evaluate_single.py`: run one testbench, score targets, and write a

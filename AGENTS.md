@@ -42,6 +42,9 @@ as simulation, DRC, LVS, or PEX evidence.
 - Treat DRC, LVS, and PEX scripts as signoff gates, not advisory checks.
 - Keep SPICE model paths configurable through `PDK_ROOT` and `PDK`; do not
   hardcode a personal absolute PDK path.
+- Layout generators should emit machine-readable intent manifests when
+  practical, but those manifests are not substitutes for DRC, LVS, PEX, or
+  post-layout simulation evidence.
 - `make eval-ota` is an exploratory evaluation target: it should complete if
   all simulations run, even when cases miss spec. Use `make eval-ota-strict`
   when a hard pass/fail gate is required.

@@ -22,7 +22,7 @@ The repo flow is intentionally file-based.
 11. `scripts/search_candidates.py` evaluates spec-configured candidate axes and
     can promote top schematic candidates into isolated physical signoff runs.
 12. `scripts/generate_ota_magic_layout.py` creates a deterministic Magic layout
-    seed from the same OTA spec.
+    seed and JSON layout manifest from the same OTA spec.
 13. Magic DRC, Netgen LVS, Magic PEX, and post-layout ngspice evaluation run as
     deterministic gates after schematic simulation meets spec.
 14. `scripts/signoff_block.py` runs the reusable end-to-end signoff stage plan
@@ -56,9 +56,9 @@ the evidence.
 - Working: tool checks, primitive sim, OTA nominal sim, multi-case OTA eval,
   current mirror template eval, recursive candidate ranking, sizing proposal
   reports, deterministic sweep reports, schematic SPICE source generation,
-  deterministic Magic layout seed, spec-driven schematic search, isolated
-  post-layout candidate search, Magic DRC, Netgen LVS, Magic PEX, post-layout
-  evaluation, and reusable block signoff orchestration.
+  deterministic Magic layout seed plus layout manifest, spec-driven schematic
+  search, isolated post-layout candidate search, Magic DRC, Netgen LVS, Magic
+  PEX, post-layout evaluation, and reusable block signoff orchestration.
 - Current schematic OTA result: `make eval-ota-strict` passes all 4 named cases.
 - Current physical OTA result: `make drc-ota` reports 0 Magic DRC errors and
   `make lvs-ota` reports `Netlists match uniquely`.

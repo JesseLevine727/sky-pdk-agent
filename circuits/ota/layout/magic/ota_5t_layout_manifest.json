@@ -1,0 +1,315 @@
+{
+  "cell": "ota_5t",
+  "design": "ota_5t",
+  "devices": [
+    {
+      "generated_m": 1,
+      "generated_nf": 1,
+      "guard_ring": true,
+      "instance": "XMP_DIODE",
+      "l_um": 1.05,
+      "model": "sky130_fd_pr__pfet_01v8",
+      "mos_type": "pmos",
+      "ports_um": {
+        "B": [
+          1.24,
+          30.0
+        ],
+        "D": [
+          0.57,
+          43.83
+        ],
+        "G": [
+          1.24,
+          57.15
+        ],
+        "S": [
+          1.91,
+          43.83
+        ]
+      },
+      "role": "diode_connected_pmos_load",
+      "source_m": 2,
+      "spec_device": "mp_load",
+      "w_um": 26,
+      "x_um": 0.0,
+      "y_um": 30.0
+    },
+    {
+      "generated_m": 1,
+      "generated_nf": 1,
+      "guard_ring": true,
+      "instance": "XMP_MIRROR",
+      "l_um": 1.05,
+      "model": "sky130_fd_pr__pfet_01v8",
+      "mos_type": "pmos",
+      "ports_um": {
+        "B": [
+          13.24,
+          30.0
+        ],
+        "D": [
+          12.57,
+          43.83
+        ],
+        "G": [
+          13.24,
+          57.15
+        ],
+        "S": [
+          13.91,
+          43.83
+        ]
+      },
+      "role": "pmos_current_mirror_load",
+      "source_m": 2,
+      "spec_device": "mp_load",
+      "w_um": 26,
+      "x_um": 12.0,
+      "y_um": 30.0
+    },
+    {
+      "generated_m": 1,
+      "generated_nf": 1,
+      "guard_ring": true,
+      "instance": "XMN_INP",
+      "l_um": 1.05,
+      "model": "sky130_fd_pr__nfet_01v8",
+      "mos_type": "nmos",
+      "ports_um": {
+        "B": [
+          1.24,
+          5.0
+        ],
+        "D": [
+          0.57,
+          13.345
+        ],
+        "G": [
+          1.24,
+          21.18
+        ],
+        "S": [
+          1.91,
+          13.345
+        ]
+      },
+      "role": "nmos_input_positive",
+      "source_m": 2,
+      "spec_device": "mn_in",
+      "w_um": 15.12,
+      "x_um": 0.0,
+      "y_um": 5.0
+    },
+    {
+      "generated_m": 1,
+      "generated_nf": 1,
+      "guard_ring": true,
+      "instance": "XMN_INN",
+      "l_um": 1.05,
+      "model": "sky130_fd_pr__nfet_01v8",
+      "mos_type": "nmos",
+      "ports_um": {
+        "B": [
+          13.24,
+          5.0
+        ],
+        "D": [
+          12.57,
+          13.345
+        ],
+        "G": [
+          13.24,
+          21.18
+        ],
+        "S": [
+          13.91,
+          13.345
+        ]
+      },
+      "role": "nmos_input_negative",
+      "source_m": 2,
+      "spec_device": "mn_in",
+      "w_um": 15.12,
+      "x_um": 12.0,
+      "y_um": 5.0
+    },
+    {
+      "generated_m": 1,
+      "generated_nf": 1,
+      "guard_ring": true,
+      "instance": "XMN_TAIL",
+      "l_um": 1.0,
+      "model": "sky130_fd_pr__nfet_01v8",
+      "mos_type": "nmos",
+      "ports_um": {
+        "B": [
+          7.215,
+          -20.0
+        ],
+        "D": [
+          6.57,
+          -15.215
+        ],
+        "G": [
+          7.215,
+          -10.94
+        ],
+        "S": [
+          7.86,
+          -15.215
+        ]
+      },
+      "role": "nmos_tail_current_source",
+      "source_m": 1,
+      "spec_device": "mn_tail",
+      "w_um": 8,
+      "x_um": 6.0,
+      "y_um": -20.0
+    }
+  ],
+  "generated_files": {
+    "magic_layout": "circuits/ota/layout/magic/ota_5t.mag",
+    "magic_log": "circuits/ota/layout/magic/ota_5t_layout.log",
+    "tcl_seed": "circuits/ota/layout/magic/ota_5t_seed.tcl"
+  },
+  "generated_layers": [
+    "locali",
+    "viali",
+    "metal1",
+    "via1",
+    "metal2",
+    "via2",
+    "metal3"
+  ],
+  "generator": "scripts/generate_ota_magic_layout.py",
+  "notes": [
+    "Coordinates are in microns.",
+    "This manifest records deterministic generator intent; DRC/LVS/PEX reports remain the signoff gates."
+  ],
+  "pdk": "sky130A",
+  "pin_order": [
+    "inp",
+    "inn",
+    "out",
+    "vdd",
+    "vss",
+    "bias"
+  ],
+  "pins": [
+    {
+      "center_um": [
+        -14.5,
+        24.5
+      ],
+      "layer": "metal1",
+      "name": "inp",
+      "origin_um": [
+        -15.0,
+        24.0
+      ],
+      "port": 0,
+      "size_um": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "center_um": [
+        18.0,
+        24.5
+      ],
+      "layer": "metal1",
+      "name": "inn",
+      "origin_um": [
+        17.5,
+        24.0
+      ],
+      "port": 1,
+      "size_um": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "center_um": [
+        10.0,
+        45.5
+      ],
+      "layer": "metal1",
+      "name": "out",
+      "origin_um": [
+        9.5,
+        45.0
+      ],
+      "port": 2,
+      "size_um": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "center_um": [
+        22.0,
+        45.5
+      ],
+      "layer": "metal1",
+      "name": "vdd",
+      "origin_um": [
+        21.5,
+        45.0
+      ],
+      "port": 3,
+      "size_um": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "center_um": [
+        24.0,
+        -24.5
+      ],
+      "layer": "metal1",
+      "name": "vss",
+      "origin_um": [
+        23.5,
+        -25.0
+      ],
+      "port": 4,
+      "size_um": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "center_um": [
+        -4.5,
+        -24.5
+      ],
+      "layer": "metal1",
+      "name": "bias",
+      "origin_um": [
+        -5.0,
+        -25.0
+      ],
+      "port": 5,
+      "size_um": [
+        1.0,
+        1.0
+      ]
+    }
+  ],
+  "route_nets": [
+    "inp",
+    "inn",
+    "out",
+    "outn",
+    "tail",
+    "vdd",
+    "vss",
+    "bias"
+  ],
+  "schema": "sky-pdk-agent.layout_manifest.v1",
+  "spec": "specs/ota.yaml"
+}

@@ -290,3 +290,26 @@ Result:
 This is the intended agentic analog pattern: schematic search is used as a fast
 screen, but source candidates are not treated as closed until layout extraction
 and post-layout evaluation agree.
+
+## 2026-07-01 Layout Manifest Evidence
+
+Strengthened deterministic layout generation by making
+`scripts/generate_ota_magic_layout.py` write a JSON layout manifest beside the
+Magic Tcl seed:
+
+- Manifest path: `circuits/ota/layout/magic/ota_5t_layout_manifest.json`
+- Captures: cell name, spec path, pin order and origins, five device
+  placements, device source sizing, generated PCell settings, routed net names,
+  generated layers, and expected Magic output files.
+
+Verification commands:
+
+```bash
+source env.sh
+make check
+make signoff-ota
+```
+
+The manifest is structured generator intent for agent inspection. It is not a
+replacement for the Magic DRC report, Netgen LVS report, Magic PEX netlist, or
+post-layout ngspice evaluation produced by `make signoff-ota`.

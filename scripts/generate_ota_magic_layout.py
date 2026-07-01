@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import shutil
 import subprocess
@@ -28,6 +29,50 @@ PIN_ORIGINS = {
     "vss": (23.5, -25.0),
     "bias": (-5.0, -25.0),
 }
+DEVICE_PLACEMENTS = [
+    {
+        "instance": "XMP_DIODE",
+        "spec_device": "mp_load",
+        "role": "diode_connected_pmos_load",
+        "mos_type": "pmos",
+        "x_um": 0.0,
+        "y_um": 30.0,
+    },
+    {
+        "instance": "XMP_MIRROR",
+        "spec_device": "mp_load",
+        "role": "pmos_current_mirror_load",
+        "mos_type": "pmos",
+        "x_um": 12.0,
+        "y_um": 30.0,
+    },
+    {
+        "instance": "XMN_INP",
+        "spec_device": "mn_in",
+        "role": "nmos_input_positive",
+        "mos_type": "nmos",
+        "x_um": 0.0,
+        "y_um": 5.0,
+    },
+    {
+        "instance": "XMN_INN",
+        "spec_device": "mn_in",
+        "role": "nmos_input_negative",
+        "mos_type": "nmos",
+        "x_um": 12.0,
+        "y_um": 5.0,
+    },
+    {
+        "instance": "XMN_TAIL",
+        "spec_device": "mn_tail",
+        "role": "nmos_tail_current_source",
+        "mos_type": "nmos",
+        "x_um": 6.0,
+        "y_um": -20.0,
+    },
+]
+ROUTE_NETS = ["inp", "inn", "out", "outn", "tail", "vdd", "vss", "bias"]
+GENERATED_LAYERS = ["locali", "viali", "metal1", "via1", "metal2", "via2", "metal3"]
 
 
 def cell_name(spec: dict[str, Any]) -> str:
@@ -133,6 +178,20 @@ def _pmos_ports(x: float, y: float, values: dict[str, Any]) -> dict[str, tuple[f
         "S": (x + 1.91, y + w / 2 + 0.83),
         "G": (x + 1.24, y + w + 1.15),
     }
+
+
+def _point(point: tuple[float, float]) -> list[float]:
+    return [round(point[0], 6), round(point[1], 6)]
+
+
+def _manifest_ports(placement: dict[str, Any], values: dict[str, Any]) -> dict[str, list[float]]:
+    x = float(placement["x_um"])
+    y = float(placement["y_um"])
+    if placement["mos_type"] == "pmos":
+        ports = _pmos_ports(x, y, values)
+    else:
+        ports = _nmos_ports(x, y, values)
+    return {name: _point(point) for name, point in ports.items()}
 
 
 def _connect(bus_x: float, term: tuple[float, float], route_y: float | None = None) -> list[str]:
@@ -289,11 +348,17 @@ def render_tcl(spec: dict[str, Any]) -> str:
         f"load {name} -force",
         "units microns",
     ]
-    lines.extend(mos_call(mp_load["model"], "XMP_DIODE", mp_load, 0.0, 30.0))
-    lines.extend(mos_call(mp_load["model"], "XMP_MIRROR", mp_load, 12.0, 30.0))
-    lines.extend(mos_call(mn_in["model"], "XMN_INP", mn_in, 0.0, 5.0))
-    lines.extend(mos_call(mn_in["model"], "XMN_INN", mn_in, 12.0, 5.0))
-    lines.extend(mos_call(mn_tail["model"], "XMN_TAIL", mn_tail, 6.0, -20.0))
+    for placement in DEVICE_PLACEMENTS:
+        values = dev(spec, str(placement["spec_device"]))
+        lines.extend(
+            mos_call(
+                str(values["model"]),
+                str(placement["instance"]),
+                values,
+                float(placement["x_um"]),
+                float(placement["y_um"]),
+            )
+        )
 
     for index, pin in enumerate(PIN_ORDER):
         pin_x, pin_y = PIN_ORIGINS[pin]
@@ -316,6 +381,97 @@ def render_tcl(spec: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def render_manifest(
+    spec: dict[str, Any],
+    out_dir: Path,
+    tcl_path: Path,
+    mag_path: Path,
+    log_path: Path | None = None,
+) -> dict[str, Any]:
+    name = cell_name(spec)
+    log = log_path if log_path is not None else out_dir / f"{name}_layout.log"
+    pins = []
+    for index, pin in enumerate(PIN_ORDER):
+        origin = PIN_ORIGINS[pin]
+        pins.append(
+            {
+                "name": pin,
+                "port": index,
+                "layer": "metal1",
+                "origin_um": _point(origin),
+                "center_um": _point(_pin_point(pin)),
+                "size_um": [1.0, 1.0],
+            }
+        )
+
+    devices = []
+    for placement in DEVICE_PLACEMENTS:
+        values = dev(spec, str(placement["spec_device"]))
+        devices.append(
+            {
+                "instance": placement["instance"],
+                "role": placement["role"],
+                "spec_device": placement["spec_device"],
+                "mos_type": placement["mos_type"],
+                "model": values["model"],
+                "x_um": placement["x_um"],
+                "y_um": placement["y_um"],
+                "w_um": values["w_um"],
+                "l_um": values["l_um"],
+                "source_m": values.get("m", 1),
+                "generated_nf": 1,
+                "generated_m": 1,
+                "guard_ring": True,
+                "ports_um": _manifest_ports(placement, values),
+            }
+        )
+
+    return {
+        "schema": "sky-pdk-agent.layout_manifest.v1",
+        "generator": "scripts/generate_ota_magic_layout.py",
+        "cell": name,
+        "design": spec.get("design", name),
+        "pdk": spec.get("pdk", "sky130A"),
+        "spec": spec.get("_meta", {}).get("spec_path", "spec"),
+        "pin_order": PIN_ORDER,
+        "pins": pins,
+        "devices": devices,
+        "route_nets": ROUTE_NETS,
+        "generated_layers": GENERATED_LAYERS,
+        "generated_files": {
+            "tcl_seed": str(tcl_path),
+            "magic_layout": str(mag_path),
+            "magic_log": str(log),
+        },
+        "notes": [
+            "Coordinates are in microns.",
+            "This manifest records deterministic generator intent; DRC/LVS/PEX reports remain the signoff gates.",
+        ],
+    }
+
+
+def write_manifest(
+    spec: dict[str, Any],
+    out_dir: Path,
+    tcl_path: Path,
+    manifest_path: Path,
+) -> Path:
+    name = cell_name(spec)
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    manifest = render_manifest(
+        spec,
+        out_dir,
+        tcl_path,
+        out_dir / f"{name}.mag",
+        out_dir / f"{name}_layout.log",
+    )
+    manifest_path.write_text(
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    return manifest_path
+
+
 def clean_generated_layout(out_dir: Path) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     for pattern in ["*.mag", "*.ext", "*.spice"]:
@@ -328,6 +484,10 @@ def main() -> int:
     parser.add_argument("--spec", required=True)
     parser.add_argument("--out-dir", required=True)
     parser.add_argument("--tcl", help="Output Tcl path. Defaults to <out-dir>/ota_5t_seed.tcl")
+    parser.add_argument(
+        "--manifest",
+        help="Output JSON manifest path. Defaults to <out-dir>/<cell>_layout_manifest.json",
+    )
     parser.add_argument("--run", action="store_true", help="Run Magic after writing Tcl")
     args = parser.parse_args()
     apply_local_tool_env()
@@ -335,10 +495,13 @@ def main() -> int:
     spec = load_spec(args.spec)
     out_dir = Path(args.out_dir)
     tcl_path = Path(args.tcl) if args.tcl else out_dir / "ota_5t_seed.tcl"
+    manifest_path = Path(args.manifest) if args.manifest else out_dir / f"{cell_name(spec)}_layout_manifest.json"
     tcl_path.parent.mkdir(parents=True, exist_ok=True)
     tcl_text = render_tcl(spec)
     tcl_path.write_text(tcl_text, encoding="utf-8")
     print(f"Wrote {tcl_path}")
+    manifest_path = write_manifest(spec, out_dir, tcl_path, manifest_path)
+    print(f"Wrote {manifest_path}")
 
     if not args.run:
         return 0
