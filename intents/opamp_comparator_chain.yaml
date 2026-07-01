@@ -1,0 +1,78 @@
+design: opamp_comparator_chain
+topology: ota_frontend_static_cmos_comparator
+
+intent: |
+  Design a 1.8 V mixed-signal analog front end where an OTA amplifies a small
+  sensor threshold crossing and drives a static CMOS comparator. The chain
+  should switch correctly across the nominal SKY130 simulation setup, stay
+  below 1 mW, and provide deterministic files and reports that Codex can use
+  for recursive block-level and chain-level improvement.
+
+requirements:
+  supply_v: 1.8
+  sensor_low_v: 0.895
+  sensor_high_v: 0.905
+  reference_v: 0.9
+  comparator_threshold_v: 0.9
+  max_chain_delay_s: 1.0e-6
+  max_power_w: 1.0e-3
+
+blocks:
+  - name: opamp
+    kind: ota_5t
+    role: Amplify the sensor-reference differential input.
+    spec: specs/ota.yaml
+  - name: comparator
+    kind: static_cmos_comparator
+    role: Convert the amplified analog node into a rail-level decision.
+    spec: specs/comparator.yaml
+  - name: opamp_comparator_chain
+    kind: hierarchical_mixed_signal_testbench
+    role: Verify opamp/comparator interface behavior and full-chain timing.
+    spec: specs/opamp_comparator_chain.yaml
+
+interfaces:
+  - from: opamp.out
+    to: comparator.vin
+    note: The OTA output must cross the comparator threshold with enough margin.
+  - from: sensor_input
+    to: opamp.inp
+    note: The sensor step is compared against the reference input.
+  - from: comparator.out
+    to: digital_decision
+    note: The static CMOS output is the digital-like chain decision.
+
+files:
+  specs:
+    - specs/comparator.yaml
+    - specs/opamp_comparator_chain.yaml
+  schematics:
+    - circuits/comparator/schematic/static_comparator.spice
+  testbenches:
+    - circuits/comparator/testbenches/comparator_tran.spice.in
+    - circuits/opamp_comparator_chain/testbenches/chain_tran.spice.in
+  reports:
+    - circuits/opamp_comparator_chain/reports/design_plan.md
+    - circuits/comparator/reports/latest_eval.md
+    - circuits/opamp_comparator_chain/reports/latest_eval.md
+    - circuits/opamp_comparator_chain/reports/design_notes.md
+
+acceptance:
+  commands:
+    - make plan-opamp-comparator-chain
+    - make eval-comparator
+    - make eval-opamp-comparator-chain
+    - make check
+  checks:
+    - Comparator transient evaluation passes all configured targets.
+    - Chain transient evaluation passes all configured targets.
+    - All generated simulation evidence remains under circuits/**/sim/runs/.
+    - Durable Markdown reports summarize the verified milestone.
+
+agent_loop:
+  - Parse the user request into this intent file.
+  - Generate or update block specs, schematics, testbenches, and reports.
+  - Run comparator evaluation before full-chain evaluation.
+  - If the chain misses, classify the miss as opamp, comparator, or interface.
+  - Modify only specs, source schematics, testbenches, or scripts.
+  - Re-run the failing block and the integrated chain after every change.

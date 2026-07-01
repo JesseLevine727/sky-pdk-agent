@@ -7,16 +7,21 @@ export PDK ?= sky130A
 SPEC ?= specs/ota.yaml
 PRIMITIVE_SPEC ?= specs/primitive_nmos.yaml
 CURRENT_MIRROR_SPEC ?= specs/current_mirror.yaml
+OPAMP_COMPARATOR_INTENT ?= intents/opamp_comparator_chain.yaml
+OPAMP_COMPARATOR_CHAIN_SPEC ?= specs/opamp_comparator_chain.yaml
+COMPARATOR_SPEC ?= specs/comparator.yaml
 OTA_TEMPLATE ?= circuits/ota/testbenches/ota_ac.spice.in
 OTA_POSTLAYOUT_TEMPLATE ?= circuits/ota/testbenches/ota_ac_postlayout.spice.in
 PRIMITIVE_TEMPLATE ?= circuits/primitives/nmos_id_vgs/testbenches/id_vgs.spice.in
 CURRENT_MIRROR_TEMPLATE ?= circuits/current_mirror/testbenches/current_mirror_dc.spice.in
+COMPARATOR_TEMPLATE ?= circuits/comparator/testbenches/comparator_tran.spice.in
+OPAMP_COMPARATOR_CHAIN_TEMPLATE ?= circuits/opamp_comparator_chain/testbenches/chain_tran.spice.in
 OTA_LAYOUT_DIR ?= circuits/ota/layout/magic
 OTA_LAYOUT ?= $(OTA_LAYOUT_DIR)/ota_5t.mag
 OTA_EXTRACTED ?= circuits/ota/layout/extracted/ota_5t_extracted.spice
 OTA_LVS_EXTRACTED ?= circuits/ota/layout/extracted/ota_5t_lvs.spice
 
-.PHONY: check tools netlist-ota render-ota sim-ota eval-ota eval-ota-strict agent-ota agent-ota-apply agent-ota-smoke render-primitive sim-primitive render-current-mirror sim-current-mirror eval-current-mirror propose-ota sweep-ota sweep-ota-quick search-ota search-ota-postlayout-quick layout-ota drc-ota extract-ota-lvs pex-ota lvs-ota postlayout-ota signoff-ota skill-validate
+.PHONY: check tools netlist-ota render-ota sim-ota eval-ota eval-ota-strict agent-ota agent-ota-apply agent-ota-smoke render-primitive sim-primitive render-current-mirror sim-current-mirror eval-current-mirror plan-opamp-comparator-chain propose-ota sweep-ota sweep-ota-quick search-ota search-ota-postlayout-quick layout-ota drc-ota extract-ota-lvs pex-ota lvs-ota postlayout-ota signoff-ota skill-validate
 
 check: tools skill-validate
 	$(PYTHON) -m unittest discover -s tests
@@ -84,6 +89,9 @@ sim-current-mirror:
 
 eval-current-mirror:
 	$(PYTHON) scripts/evaluate_single.py --spec $(CURRENT_MIRROR_SPEC) --template $(CURRENT_MIRROR_TEMPLATE) --out-dir circuits/current_mirror/sim/runs/eval --report circuits/current_mirror/reports/latest_eval.md --strict
+
+plan-opamp-comparator-chain:
+	$(PYTHON) scripts/design_intake.py --intent $(OPAMP_COMPARATOR_INTENT) --report circuits/opamp_comparator_chain/reports/design_plan.md --scaffold
 
 propose-ota:
 	$(PYTHON) scripts/propose_sizing.py --spec $(SPEC) --measures circuits/ota/sim/runs/latest/measures.json --out circuits/ota/reports/sizing_proposal.json
